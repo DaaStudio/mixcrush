@@ -1,1 +1,3523 @@
-a
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mix Crush</title>
+    <meta name="theme-color" content="#ff6b9d">
+    <style>
+        /* === TEMEL STİLLER === */
+        :root {
+            --primary: #ff6b9d;
+            --secondary: #4ecdc4;
+            --accent: #ffe66d;
+            --danger: #ff5252;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --board-bg: rgba(255, 255, 255, 0.95);
+            --candy-size: 50px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --dark-bg: #1a1a2e;
+            --dark-card: #16213e;
+            --dark-text: #e0e0e0;
+            --dark-border: #2d3047;
+            --gold: #ffd700;
+            --rainbow: linear-gradient(45deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0088);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            touch-action: none;
+            overscroll-behavior: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* === EKRAN SİSTEMİ === */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: var(--bg-gradient);
+            padding: 15px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* === ANA MENÜ === */
+        .start-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .start-logo {
+            font-size: 70px;
+            animation: bounce 2s infinite alternate;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .start-title {
+            font-size: 36px;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 800;
+        }
+
+        .start-subtitle {
+            font-size: 16px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+        }
+
+        .start-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .start-btn {
+            padding: 16px 20px;
+            font-size: 17px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .start-btn-primary {
+            background: linear-gradient(135deg, var(--primary), #ff4081);
+            color: white;
+        }
+
+        .start-btn-secondary {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* === ŞEKİL SEÇİM === */
+        .shape-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .shape-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+            justify-items: center;
+            align-items: center;
+        }
+
+        .shape-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 25px 15px;
+            font-size: 36px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90px;
+            height: 90px;
+        }
+
+        .shape-btn.active {
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255,230,109,0.7);
+        }
+
+        /* === SEVİYELER EKRANI === */
+        .levels-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .levels-header {
+            flex-shrink: 0;
+            margin-bottom: 15px;
+        }
+
+        .levels-grid-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px 5px;
+        }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+
+        .level-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 5px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        .level-btn:hover:not(.locked) {
+            transform: scale(1.05);
+        }
+
+        .level-btn.completed {
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        .level-btn.locked {
+            background: linear-gradient(135deg, #666, #888);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .level-time {
+            font-size: 10px;
+            margin-top: 4px;
+            color: var(--accent);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .level-stars {
+            font-size: 10px;
+            color: var(--gold);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .level-number {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        /* === OYUN EKRANI === */
+        #top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 1000;
+        }
+
+        .top-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        #mode-indicator {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #game-container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--board-bg);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            margin-top: 70px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .game-header {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 6px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .header-label {
+            font-size: 10px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .header-value {
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 2px;
+            background: #e0e0e0;
+            padding: 10px;
+            border-radius: 12px;
+            margin: 0 auto 15px;
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 1;
+            overflow: hidden;
+        }
+
+        .candy {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .candy::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            border-radius: 8px;
+        }
+
+        .candy:hover {
+            transform: scale(1.05);
+        }
+
+        .candy.selected {
+            animation: pulse 1s infinite;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 0 3px var(--accent);
+            z-index: 10;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .candy.matched {
+            animation: match 0.6s ease-out forwards;
+        }
+
+        @keyframes match {
+            0% { transform: scale(1) rotate(0); opacity: 1; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 0.7; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        /* === ÖZEL ŞEKER STİLLERİ === */
+        .candy.special-striped {
+            background: var(--rainbow) !important;
+            animation: rainbowGlow 2s infinite alternate;
+        }
+
+        .candy.special-wrapped {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--primary),
+                var(--primary) 10px,
+                var(--secondary) 10px,
+                var(--secondary) 20px
+            ) !important;
+            animation: spin 3s infinite linear;
+        }
+
+        .candy.special-color-bomb {
+            background: linear-gradient(45deg, #ff0000, #00ff00, #0000ff) !important;
+            animation: bombPulse 1.5s infinite;
+        }
+
+        .candy.special-fish {
+            background: linear-gradient(135deg, #36D1DC, #5B86E5) !important;
+            animation: fishSwim 2s infinite alternate;
+        }
+
+        .candy.special-coconut {
+            background: linear-gradient(135deg, #8B4513, #D2691E) !important;
+            animation: coconutShake 1s infinite;
+        }
+
+        @keyframes rainbowGlow {
+            0% { filter: brightness(1) saturate(1); }
+            100% { filter: brightness(1.2) saturate(1.5); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bombPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px #ff0000; }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px #ff0000, 0 0 30px #ff0000; }
+        }
+
+        @keyframes fishSwim {
+            0% { transform: translateY(-3px) rotate(-5deg); }
+            100% { transform: translateY(3px) rotate(5deg); }
+        }
+
+        @keyframes coconutShake {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* === BOOSTER'LAR === */
+        .boosters-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .booster-btn {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            border: none;
+            border-radius: 12px;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .booster-btn:hover:not(.disabled) {
+            transform: scale(1.05);
+        }
+
+        .booster-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .booster-btn.out-of-stock {
+            background: linear-gradient(135deg, #cccccc, #999999);
+        }
+
+        .booster-btn .add-plus {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--success);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            animation: addPlusPulse 1.5s infinite;
+            z-index: 10;
+        }
+
+        @keyframes addPlusPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .booster-icon {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .booster-count {
+            font-size: 16px;
+            font-weight: 700;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 2px 8px;
+            min-width: 25px;
+        }
+
+        /* === BOOSTER AÇIKLAMA BİLDİRİMİ === */
+        .booster-info {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 15px;
+            font-weight: 600;
+            z-index: 3001;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            max-width: 300px;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .booster-info.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* === MODALLAR === */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 15px;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 450px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .setting-item label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        /* === İSTATİSTİKLER === */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 8px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .level-time-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .level-time-number {
+            font-weight: bold;
+            color: var(--primary);
+            min-width: 30px;
+        }
+
+        .level-time-value {
+            font-family: monospace;
+            color: #333;
+        }
+
+        /* === OYUN BİTTİ MODALI === */
+        .game-over-content {
+            text-align: center;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .result-stat {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .result-stat-value {
+            color: var(--primary);
+            font-size: 18px;
+            margin-top: 5px;
+        }
+
+        /* === TOAST MESAJI === */
+        .toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--success);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 3000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            max-width: 85%;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* === ONAY MODALI === */
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 4000;
+            padding: 15px;
+        }
+
+        .confirm-modal.active {
+            display: flex;
+        }
+
+        .confirm-content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .confirm-content h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .confirm-content p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .confirm-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 90px;
+        }
+
+        .confirm-btn-yes {
+            background: var(--success);
+            color: white;
+        }
+
+        .confirm-btn-no {
+            background: var(--danger);
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        /* === KARANLIK MOD === */
+        body.dark-mode {
+            --bg-gradient: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-card) 100%);
+            --board-bg: var(--dark-card);
+        }
+
+        body.dark-mode .modal-content {
+            background: var(--dark-card);
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .modal-header h2 {
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .close-btn {
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .setting-item {
+            background: rgba(255,255,255,0.1);
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .setting-item label {
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .level-time-item {
+            background: rgba(255,255,255,0.1);
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .result-stat {
+            background: rgba(255,255,255,0.1);
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .confirm-content {
+            background: var(--dark-card);
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .confirm-content h3 {
+            color: var(--dark-text);
+        }
+
+        body.dark-mode .confirm-content p {
+            color: rgba(255,255,255,0.8);
+        }
+
+        body.dark-mode .level-btn.locked {
+            background: linear-gradient(135deg, #444, #666);
+        }
+
+        /* === BOOSTER REKLAM MODALI === */
+        .ad-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+            padding: 15px;
+        }
+
+        .ad-modal.active {
+            display: flex;
+        }
+
+        .ad-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .ad-content h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .ad-content p {
+            margin-bottom: 25px;
+            line-height: 1.5;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        /* === MOBİL UYUMLULUK === */
+        @media (max-width: 768px) {
+            :root {
+                --candy-size: min(45px, calc((100vw - 60px) / 8 - 4px));
+            }
+            
+            #game-board {
+                gap: 1px;
+                padding: 8px;
+            }
+            
+            .candy {
+                font-size: 22px;
+                border-radius: 6px;
+            }
+            
+            .shape-btn {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+                padding: 20px 10px;
+            }
+            
+            .levels-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+                max-width: 350px;
+            }
+            
+            .level-btn {
+                padding: 12px 4px;
+                font-size: 16px;
+            }
+            
+            .levels-grid-container {
+                padding: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .start-container {
+                padding: 15px;
+            }
+            
+            .start-title {
+                font-size: 28px;
+            }
+            
+            .start-logo {
+                font-size: 50px;
+            }
+            
+            .start-btn {
+                padding: 14px 16px;
+                font-size: 15px;
+            }
+            
+            .game-header {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 5px;
+            }
+            
+            .header-card {
+                padding: 8px 4px;
+            }
+            
+            .header-label {
+                font-size: 9px;
+            }
+            
+            .header-value {
+                font-size: 16px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .shape-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+                padding: 18px 8px;
+            }
+            
+            #game-container {
+                margin-top: 60px;
+                padding: 10px;
+            }
+            
+            .candy {
+                font-size: 20px;
+            }
+            
+            .booster-btn {
+                width: 65px;
+                height: 65px;
+            }
+            
+            .booster-icon {
+                font-size: 24px;
+            }
+            
+            .levels-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+                max-width: 320px;
+            }
+            
+            .level-btn {
+                padding: 10px 3px;
+                font-size: 14px;
+            }
+            
+            .levels-container {
+                padding: 15px;
+            }
+            
+            .levels-header {
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            :root {
+                --candy-size: min(40px, calc((100vw - 50px) / 8 - 3px));
+            }
+            
+            .start-title {
+                font-size: 24px;
+            }
+            
+            .game-header {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            #game-board {
+                padding: 6px;
+                gap: 1px;
+            }
+            
+            .candy {
+                font-size: 18px;
+            }
+            
+            .shape-btn {
+                width: 65px;
+                height: 65px;
+                font-size: 26px;
+                padding: 16px 8px;
+            }
+            
+            .booster-btn {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .booster-icon {
+                font-size: 22px;
+            }
+            
+            .levels-grid {
+                grid-template-columns: repeat(4, 1fr);
+                max-width: 280px;
+            }
+            
+            .level-btn {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            :root {
+                --candy-size: min(36px, calc((100vw - 40px) / 8 - 2px));
+            }
+            
+            .shape-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 100%;
+                gap: 12px;
+            }
+            
+            .shape-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+                padding: 15px 5px;
+            }
+            
+            .candy {
+                font-size: 16px;
+            }
+            
+            .booster-btn {
+                width: 55px;
+                height: 55px;
+            }
+            
+            .booster-icon {
+                font-size: 20px;
+            }
+            
+            .levels-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 5px;
+                max-width: 260px;
+            }
+            
+            .level-btn {
+                padding: 8px 2px;
+                font-size: 12px;
+            }
+        }
+
+        /* === YARDIMCI SINIFLAR === */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-10 { margin-top: 10px; }
+        .mt-15 { margin-top: 15px; }
+        .mt-20 { margin-top: 20px; }
+        .mb-10 { margin-bottom: 10px; }
+        .mb-15 { margin-bottom: 15px; }
+        .mb-20 { margin-bottom: 20px; }
+        
+        /* === SCROLLBAR === */
+        .screen::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .screen::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        .screen::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+        }
+        
+        .screen::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.5);
+        }
+        
+        .levels-grid-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .levels-grid-container::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        .levels-grid-container::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+        
+        .levels-grid-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* === LEVELS SCROLL FIX === */
+        .levels-grid-container {
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <!-- ANA MENÜ -->
+    <div id="start-screen" class="screen active">
+        <div class="start-container">
+            <div class="start-logo">🔀</div>
+            <h1 class="start-title">MIX CRUSH</h1>
+            <p class="start-subtitle">Karıştır, Eşleştir, Kazan!</p>
+            
+            <div class="start-buttons">
+                <button id="start-btn" class="start-btn start-btn-primary">
+                    <span>🎮</span> OYUNA BAŞLA
+                </button>
+                <button id="levels-btn" class="start-btn start-btn-secondary">
+                    <span>🏆</span> SEVİYELER
+                </button>
+                <button id="stats-btn" class="start-btn start-btn-secondary">
+                    <span>📊</span> İSTATİSTİKLER
+                </button>
+                <button id="settings-btn" class="start-btn start-btn-secondary">
+                    <span>⚙️</span> AYARLAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ŞEKİL SEÇİM -->
+    <div id="shape-screen" class="screen">
+        <div class="shape-container">
+            <div class="start-logo">🎨</div>
+            <h1 class="start-title">Tema Seç</h1>
+            <p class="start-subtitle">Favori temanı seç ve oyuna başla</p>
+            
+            <div class="shape-grid">
+                <button class="shape-btn" data-shape="candy">🍭</button>
+                <button class="shape-btn" data-shape="sports">⚽</button>
+                <button class="shape-btn" data-shape="planets">🪐</button>
+                <button class="shape-btn" data-shape="balloons">🎈</button>
+                <button class="shape-btn" data-shape="letters">🔤</button>
+                <button class="shape-btn" data-shape="numbers">🔢</button>
+                <button class="shape-btn" data-shape="fruits">🍎</button>
+                <button class="shape-btn" data-shape="animals">🐱</button>
+                <button class="shape-btn" data-shape="hearts">💖</button>
+            </div>
+            
+            <div class="start-buttons">
+                <button id="shape-confirm" class="start-btn start-btn-primary">
+                    <span>✅</span> ONAYLA VE BAŞLA
+                </button>
+                <button id="back-from-shape" class="start-btn start-btn-secondary">
+                    <span>←</span> GERİ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEVİYELER EKRANI -->
+    <div id="levels-screen" class="screen">
+        <div class="levels-container">
+            <div class="levels-header">
+                <div class="start-logo">🏆</div>
+                <h1 class="start-title">Seviyeler</h1>
+                <p class="start-subtitle" id="levels-info">Açık Seviyeler: <span id="open-levels">1</span>/100</p>
+            </div>
+            
+            <div class="levels-grid-container">
+                <div class="levels-grid" id="levels-grid">
+                    <!-- Seviyeler JavaScript ile buraya eklenecek -->
+                </div>
+            </div>
+            
+            <div class="start-buttons">
+                <button id="back-from-levels" class="start-btn start-btn-secondary">
+                    <span>←</span> ANA MENÜ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OYUN EKRANI -->
+    <div id="game-screen" class="screen">
+        <div id="top-bar">
+            <button id="home-btn" class="top-btn" title="Ana Menü">🏠</button>
+            <div id="mode-indicator">Seviye 1</div>
+            <button id="game-settings-btn" class="top-btn" title="Ayarlar">⚙️</button>
+        </div>
+        
+        <div id="game-container">
+            <div class="game-header">
+                <div class="header-card">
+                    <div class="header-label">SEVİYE</div>
+                    <div class="header-value" id="level-display">1</div>
+                </div>
+                <div class="header-card">
+                    <div class="header-label">PUAN</div>
+                    <div class="header-value" id="score-display">0</div>
+                </div>
+                <div class="header-card">
+                    <div class="header-label">HAMLE</div>
+                    <div class="header-value" id="moves-display">30</div>
+                </div>
+                <div class="header-card time-card">
+                    <div class="header-label">SÜRE</div>
+                    <div class="header-value" id="time-display">0:00</div>
+                </div>
+            </div>
+            
+            <div id="game-board">
+                <!-- Oyun tahtası JavaScript ile oluşturulacak -->
+            </div>
+            
+            <div class="boosters-container">
+                <button class="booster-btn" data-booster="hammer" title="Tek şeker kır">
+                    <div class="booster-icon">🔨</div>
+                    <div class="booster-count" id="hammer-count">3</div>
+                </button>
+                <button class="booster-btn" data-booster="bomb" title="3x3 alanı temizle">
+                    <div class="booster-icon">💣</div>
+                    <div class="booster-count" id="bomb-count">2</div>
+                </button>
+                <button class="booster-btn" data-booster="shuffle" title="Tahtayı karıştır">
+                    <div class="booster-icon">🔀</div>
+                    <div class="booster-count" id="shuffle-count">1</div>
+                </button>
+                <button class="booster-btn" data-booster="fish" title="Rastgele şekerleri temizle">
+                    <div class="booster-icon">🐟</div>
+                    <div class="booster-count" id="fish-count">2</div>
+                </button>
+                <button class="booster-btn" data-booster="coconut" title="Sütun temizle">
+                    <div class="booster-icon">🥥</div>
+                    <div class="booster-count" id="coconut-count">1</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOSTER AÇIKLAMA BİLDİRİMİ -->
+    <div id="booster-info" class="booster-info"></div>
+
+    <!-- AYARLAR MODALI -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ Mix Crush Ayarları</h2>
+                <button class="close-btn" id="close-settings">×</button>
+            </div>
+            
+            <h3>🔊 Ses Ayarları</h3>
+            <div class="setting-item">
+                <label>Ses Efektleri</label>
+                <input type="range" id="sfx-volume" min="0" max="100" value="70">
+                <span id="sfx-value">70%</span>
+            </div>
+            
+            <div class="setting-item">
+                <label>Müzik</label>
+                <input type="range" id="music-volume" min="0" max="100" value="50">
+                <span id="music-value">50%</span>
+            </div>
+            
+            <h3>🎨 Görünüm</h3>
+            <div class="setting-item">
+                <label>Görsel Efektler</label>
+                <input type="checkbox" id="effects-toggle" checked>
+            </div>
+            
+            <div class="setting-item">
+                <label>Karanlık Mod</label>
+                <input type="checkbox" id="dark-mode-toggle">
+            </div>
+            
+            <h3>🔄 Veri Yönetimi</h3>
+            <div class="setting-item">
+                <label>Tüm Verileri Sıfırla</label>
+                <button id="reset-btn" class="start-btn start-btn-secondary" style="padding: 8px 16px; font-size: 14px;">Sıfırla</button>
+            </div>
+            
+            <button id="close-settings-btn" class="start-btn start-btn-primary mt-20" style="width: 100%;">
+                <span>✅</span> TAMAM
+            </button>
+        </div>
+    </div>
+
+    <!-- İSTATİSTİKLER MODALI -->
+    <div id="stats-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Mix Crush İstatistikleri</h2>
+                <button class="close-btn" id="close-stats">×</button>
+            </div>
+            
+            <h3>📈 Genel İstatistikler</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-games">0</div>
+                    <div class="stat-label">Toplam Oyun</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-score">0</div>
+                    <div class="stat-label">Toplam Puan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-time">0</div>
+                    <div class="stat-label">Toplam Süre</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="best-combo">0</div>
+                    <div class="stat-label">En İyi Combo</div>
+                </div>
+            </div>
+            
+            <h3>🏆 En İyi Skorlar</h3>
+            <div class="setting-item">
+                <label>En Yüksek Puan</label>
+                <span id="best-score">0</span>
+            </div>
+            <div class="setting-item">
+                <label>En Hızlı Seviye</label>
+                <span id="fastest-level">-</span>
+            </div>
+            <div class="setting-item">
+                <label>Tamamlanan Seviye</label>
+                <span id="completed-levels">0/100</span>
+            </div>
+            
+            <h3>⏱️ Seviye Süreleri</h3>
+            <div id="level-times" style="max-height: 200px; overflow-y: auto;">
+                <div class="text-center" style="color:#999; padding:15px; font-size:14px;">
+                    Henüz seviye tamamlanmadı
+                </div>
+            </div>
+            
+            <h3>✨ Özel İstatistikler</h3>
+            <div class="setting-item">
+                <label>Oluşturulan Özel Şeker</label>
+                <span id="total-specials">0</span>
+            </div>
+            <div class="setting-item">
+                <label>Yapılan Eşleştirme</label>
+                <span id="total-matches">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- OYUN BİTTİ MODALI -->
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content game-over-content">
+            <h2 id="game-over-title">🎉 Seviye Tamamlandı!</h2>
+            
+            <div style="font-size: 22px; text-align: center; margin: 15px 0; font-weight: bold;">
+                Puan: <span id="final-score">0</span>
+            </div>
+            
+            <div class="result-stats">
+                <div class="result-stat">
+                    <div>⏱️ Süre</div>
+                    <div class="result-stat-value" id="level-time">0:00</div>
+                </div>
+                <div class="result-stat">
+                    <div>🔥 Combo</div>
+                    <div class="result-stat-value" id="max-combo">0x</div>
+                </div>
+                <div class="result-stat">
+                    <div>💎 Özel</div>
+                    <div class="result-stat-value" id="special-count">0</div>
+                </div>
+                <div class="result-stat">
+                    <div>🎯 Verim</div>
+                    <div class="result-stat-value" id="efficiency">0%</div>
+                </div>
+            </div>
+            
+            <div class="start-buttons">
+                <button id="next-level-btn" class="start-btn start-btn-primary">
+                    <span>➡️</span> SONRAKİ SEVİYE
+                </button>
+                <button id="restart-level-btn" class="start-btn start-btn-secondary">
+                    <span>🔄</span> TEKRAR OYNA
+                </button>
+                <button id="back-to-levels-btn" class="start-btn start-btn-secondary">
+                    <span>🏆</span> SEVİYELER
+                </button>
+                <button id="back-to-menu-btn" class="start-btn start-btn-secondary">
+                    <span>🏠</span> ANA MENÜ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ONAY MODALI -->
+    <div id="confirm-modal" class="confirm-modal">
+        <div class="confirm-content">
+            <h3 id="confirm-title">Onay</h3>
+            <p id="confirm-message">Devam etmek istiyor musunuz?</p>
+            <div class="confirm-buttons">
+                <button id="confirm-yes" class="confirm-btn confirm-btn-yes">Evet</button>
+                <button id="confirm-no" class="confirm-btn confirm-btn-no">Hayır</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOSTER REKLAM MODALI -->
+    <div id="ad-modal" class="ad-modal">
+        <div class="ad-content">
+            <h3>🎁 Mix Crush Booster Kazan!</h3>
+            <p>Reklam izleyerek 1 adet ücretsiz booster kazanabilirsin.</p>
+            <div class="confirm-buttons">
+                <button id="watch-ad-btn" class="confirm-btn confirm-btn-yes">Reklam İzle</button>
+                <button id="cancel-ad-btn" class="confirm-btn confirm-btn-no">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST MESAJI -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // === OYUN SINIFI ===
+        class MixCrushGame {
+            constructor() {
+                this.size = 8;
+                this.board = [];
+                this.score = 0;
+                this.moves = 30;
+                this.target = 10000;
+                this.level = 1;
+                this.selected = null;
+                this.isBusy = false;
+                this.combo = 0;
+                this.maxCombo = 0;
+                this.stats = { 
+                    matches: 0, 
+                    specials: 0, 
+                    time: 0, 
+                    colorMatches: {},
+                    currentStreak: 0,
+                    maxStreak: 0,
+                    specialsCreated: 0,
+                    specialsUsed: 0
+                };
+                this.gameTime = 0;
+                this.timeInterval = null;
+                this.timeBonusActive = false;
+                this.currentBooster = null;
+                this.isTimerPaused = false;
+                this.adWindow = null;
+                this.adCheckInterval = null;
+                this.lastNotificationTime = 0;
+                this.fromLevelsScreen = false;
+                
+                this.storage = new StorageManager();
+                this.audio = new AudioManager(this.storage);
+                this.particles = new ParticleSystem(this.storage);
+                this.boosters = new BoosterManager(this, this.storage);
+                
+                this.initThemes();
+                this.initLevels();
+                this.bindEvents();
+                this.applySettings();
+                this.updateLevelsGrid();
+                
+                // Ekran boyutunu takip et
+                window.addEventListener('resize', () => this.adjustBoardSize());
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => this.adjustBoardSize(), 100);
+                });
+            }
+
+            initThemes() {
+                this.themes = {
+                    candy: { 
+                        emojis: ['🍬', '🍭', '🍫', '🧁', '🍪', '🍩'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    },
+                    sports: { 
+                        emojis: ['⚽', '🏀', '🎾', '🏐', '🏉', '🥎'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    },
+                    planets: { 
+                        emojis: ['🪐', '🌑', '🌚', '🌕', '🌝', '☄️'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    },
+                    balloons: { 
+                        emojis: ['🎈', '🎊', '🎉', '🎁', '🎀', '🎗️'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    },
+                    letters: { 
+                        emojis: ['A', 'B', 'C', 'D', 'E', 'F'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    },
+                    numbers: { 
+                        emojis: ['1', '2', '3', '4', '5', '6'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    },
+                    fruits: { 
+                        emojis: ['🍎', '🍌', '🍇', '🍓', '🍉', '🍊'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    },
+                    animals: { 
+                        emojis: ['🐱', '🐶', '🐰', '🐯', '🐨', '🐼'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    },
+                    hearts: { 
+                        emojis: ['💖', '💙', '💚', '💛', '💜', '🧡'], 
+                        colors: ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF5252', '#36D1DC', '#5B86E5'] 
+                    }
+                };
+                
+                const savedShape = this.storage.get('settings').shape || 'candy';
+                this.currentShape = savedShape;
+                this.activeTheme = this.themes[savedShape] || this.themes.candy;
+                
+                // Tema butonlarını seçili yap
+                document.querySelectorAll('.shape-btn').forEach(btn => {
+                    if (btn.dataset.shape === savedShape) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+
+            initLevels() {
+                // 100 seviyelik sistem
+                this.levels = [];
+                for (let i = 1; i <= 100; i++) {
+                    const baseTarget = 10000;
+                    const target = baseTarget * (1 + (i - 1) * 0.2);
+                    const moves = Math.max(15, 35 - Math.floor(i / 5));
+                    
+                    this.levels.push({
+                        id: i,
+                        target: Math.round(target),
+                        moves: moves,
+                        difficulty: i <= 20 ? 'Kolay' : i <= 50 ? 'Orta' : i <= 80 ? 'Zor' : 'Çok Zor',
+                        stars: 0, // 0-3 arası yıldız sayısı
+                        completed: false,
+                        bestTime: null,
+                        bestScore: 0
+                    });
+                }
+            }
+
+            bindEvents() {
+                // Ana menü butonları
+                document.getElementById('start-btn').onclick = () => this.showShapeSelection();
+                document.getElementById('levels-btn').onclick = () => this.showLevelsScreen();
+                document.getElementById('stats-btn').onclick = () => this.showStats();
+                document.getElementById('settings-btn').onclick = () => this.showSettings();
+                
+                // Şekil seçim
+                document.getElementById('back-from-shape').onclick = () => this.showScreen('start-screen');
+                document.getElementById('shape-confirm').onclick = () => this.startGameFromShape();
+                document.querySelectorAll('.shape-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        document.querySelectorAll('.shape-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentShape = btn.dataset.shape;
+                    };
+                });
+                
+                // Seviyeler ekranı
+                document.getElementById('back-from-levels').onclick = () => this.showScreen('start-screen');
+                
+                // Oyun ekranı
+                document.getElementById('home-btn').onclick = () => this.showConfirm(
+                    'Oyundan Çık',
+                    'Mix Crush oyunundan çıkmak istediğine emin misin? Kaydedilmemiş ilerlemen kaybolabilir.',
+                    () => this.showScreen('start-screen')
+                );
+                document.getElementById('game-settings-btn').onclick = () => this.showSettings();
+                
+                // Ayarlar modalı
+                document.getElementById('close-settings').onclick = () => this.hideModal('settings-modal');
+                document.getElementById('close-settings-btn').onclick = () => this.hideModal('settings-modal');
+                document.getElementById('reset-btn').onclick = () => {
+                    this.showConfirm(
+                        'Verileri Sıfırla',
+                        'Tüm Mix Crush oyun verileri silinecek. Bu işlem geri alınamaz. Emin misiniz?',
+                        () => this.storage.reset()
+                    );
+                };
+                
+                // İstatistikler modalı
+                document.getElementById('close-stats').onclick = () => this.hideModal('stats-modal');
+                
+                // Oyun bitti modalı
+                document.getElementById('next-level-btn').onclick = () => this.nextLevel();
+                document.getElementById('restart-level-btn').onclick = () => this.restartLevel();
+                document.getElementById('back-to-levels-btn').onclick = () => {
+                    this.hideModal('game-over-modal');
+                    this.showLevelsScreen();
+                };
+                document.getElementById('back-to-menu-btn').onclick = () => {
+                    this.hideModal('game-over-modal');
+                    this.showScreen('start-screen');
+                };
+                
+                // Onay modalı
+                document.getElementById('confirm-yes').onclick = () => this.confirmYes();
+                document.getElementById('confirm-no').onclick = () => this.hideConfirm();
+                
+                // Reklam modalı
+                document.getElementById('watch-ad-btn').onclick = () => this.watchAd();
+                document.getElementById('cancel-ad-btn').onclick = () => this.cancelAd();
+                
+                // Ayarlar kontrolleri
+                document.getElementById('sfx-volume').oninput = (e) => {
+                    const value = e.target.value;
+                    document.getElementById('sfx-value').textContent = `${value}%`;
+                    this.audio.setVolume('sfx', parseInt(value));
+                };
+                
+                document.getElementById('music-volume').oninput = (e) => {
+                    const value = e.target.value;
+                    document.getElementById('music-value').textContent = `${value}%`;
+                    this.audio.setVolume('music', parseInt(value));
+                };
+                
+                document.getElementById('effects-toggle').onchange = (e) => {
+                    this.storage.update('settings', { effects: e.target.checked });
+                    this.particles.enabled = e.target.checked;
+                };
+                
+                document.getElementById('dark-mode-toggle').onchange = (e) => {
+                    this.storage.update('settings', { darkMode: e.target.checked });
+                    this.applySettings();
+                };
+                
+                // Booster butonları
+                document.querySelectorAll('.booster-btn').forEach(btn => {
+                    btn.onclick = (e) => {
+                        e.stopPropagation();
+                        const type = btn.dataset.booster;
+                        this.showBoosterInfo(type);
+                        
+                        if (btn.classList.contains('out-of-stock')) {
+                            setTimeout(() => {
+                                this.showAdModal(type);
+                            }, 800);
+                        } else {
+                            this.useBooster(type);
+                        }
+                    };
+                });
+                
+                // Touch events için
+                this.setupTouchEvents();
+            }
+
+            setupTouchEvents() {
+                let touchStartX, touchStartY;
+                const gameBoard = document.getElementById('game-board');
+                
+                gameBoard.addEventListener('touchstart', (e) => {
+                    if (this.isBusy) return;
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                }, { passive: false });
+                
+                gameBoard.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    const touch = e.changedTouches[0];
+                    const deltaX = touch.clientX - touchStartX;
+                    const deltaY = touch.clientY - touchStartY;
+                    
+                    // Kısa dokunma için
+                    if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (element && element.classList.contains('candy')) {
+                            const row = +element.dataset.row;
+                            const col = +element.dataset.col;
+                            if (!isNaN(row) && !isNaN(col)) {
+                                this.clickCandy(this.board[row][col]);
+                            }
+                        }
+                    }
+                }, { passive: false });
+            }
+
+            // === EKRAN YÖNETİMİ ===
+            showScreen(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+                
+                if (id === 'game-screen') {
+                    setTimeout(() => {
+                        this.adjustBoardSize();
+                    }, 100);
+                }
+                
+                if (id === 'stats-modal') {
+                    this.updateStats();
+                }
+                
+                if (id === 'levels-screen') {
+                    this.updateLevelsGrid();
+                }
+            }
+
+            showShapeSelection() {
+                this.showScreen('shape-screen');
+            }
+
+            showLevelsScreen() {
+                this.showScreen('levels-screen');
+            }
+
+            showSettings() {
+                this.applySettings();
+                this.showModal('settings-modal');
+            }
+
+            showStats() {
+                this.updateStats();
+                this.showModal('stats-modal');
+            }
+
+            showModal(id) {
+                document.getElementById(id).classList.add('active');
+                this.pauseTimer();
+            }
+
+            hideModal(id) {
+                document.getElementById(id).classList.remove('active');
+                this.resumeTimer();
+            }
+
+            showConfirm(title, message, yesCallback) {
+                document.getElementById('confirm-title').textContent = title;
+                document.getElementById('confirm-message').textContent = message;
+                this.confirmCallback = yesCallback;
+                document.getElementById('confirm-modal').classList.add('active');
+            }
+
+            hideConfirm() {
+                document.getElementById('confirm-modal').classList.remove('active');
+                this.confirmCallback = null;
+            }
+
+            confirmYes() {
+                if (this.confirmCallback) {
+                    this.confirmCallback();
+                }
+                this.hideConfirm();
+            }
+
+            showAdModal(boosterType) {
+                this.requestedBooster = boosterType;
+                this.showModal('ad-modal');
+            }
+
+            hideAdModal() {
+                this.hideModal('ad-modal');
+                this.requestedBooster = null;
+            }
+
+            cancelAd() {
+                this.hideAdModal();
+                this.showToast("Reklam izleme iptal edildi.");
+            }
+
+            showBoosterInfo(type) {
+                const booster = this.boosters.types[type];
+                if (!booster) return;
+                
+                const messages = {
+                    'hammer': '🔨 Çekiç: Tek bir şekeri kırmak için kullan. Aktifken bir şekere tıkla.',
+                    'bomb': '💣 Bomba: 3x3 alandaki şekerleri patlatır. Aktifken bir şekere tıkla.',
+                    'shuffle': '🔀 Karıştır: Tüm şekerleri yeniden karıştırır. Hemen etki eder.',
+                    'fish': '🐟 Balık: Rastgele 3 şekeri temizler. Aktifken bir şekere tıkla.',
+                    'coconut': '🥥 Hindistan Cevizi: Tüm sütunu temizler. Aktifken bir şekere tıkla.'
+                };
+                
+                const info = document.getElementById('booster-info');
+                info.textContent = messages[type] || booster.desc;
+                info.classList.remove('show');
+                
+                // Küçük gecikme ile göster
+                setTimeout(() => {
+                    info.classList.add('show');
+                }, 10);
+                
+                // 2 saniye sonra gizle
+                setTimeout(() => {
+                    info.classList.remove('show');
+                }, 2000);
+            }
+
+            watchAd() {
+                // Reklam izleme simülasyonu
+                this.showToast("Reklam izleniyor...");
+                
+                // Yeni sekmede reklam aç (simülasyon)
+                this.adWindow = window.open('', '_blank', 'width=400,height=600');
+                if (this.adWindow) {
+                    this.adWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <title>Reklam - Mix Crush</title>
+                            <style>
+                                body { 
+                                    margin: 0; 
+                                    padding: 20px; 
+                                    font-family: Arial; 
+                                    background: linear-gradient(135deg, #667eea, #764ba2);
+                                    color: white;
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: center;
+                                    height: 100vh;
+                                    text-align: center;
+                                }
+                                h1 { font-size: 36px; margin-bottom: 20px; }
+                                p { font-size: 18px; margin-bottom: 30px; }
+                                .countdown {
+                                    font-size: 48px;
+                                    font-weight: bold;
+                                    margin: 20px 0;
+                                    color: #ffd700;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>🎬 Mix Crush Reklamı</h1>
+                            <p>Teşekkürler! Reklamı izlediğiniz için booster kazandınız.</p>
+                            <div class="countdown" id="countdown">3</div>
+                            <p>Bu pencere otomatik olarak kapanacak...</p>
+                            <script>
+                                // Geri sayım
+                                let time = 3;
+                                const countdownEl = document.getElementById('countdown');
+                                
+                                const timer = setInterval(() => {
+                                    time--;
+                                    countdownEl.textContent = time;
+                                    
+                                    if (time <= 0) {
+                                        clearInterval(timer);
+                                        // Oyun penceresine mesaj gönder
+                                        try {
+                                            window.opener.postMessage('ad_completed', '*');
+                                        } catch(e) {}
+                                        window.close();
+                                    }
+                                }, 1000);
+                            <\/script>
+                        </body>
+                        </html>
+                    `);
+                    
+                    // Reklam penceresini kontrol et
+                    this.startAdWindowCheck();
+                } else {
+                    // Pencere açılamazsa direkt booster ekle
+                    this.addBoosterByAd();
+                    this.hideAdModal();
+                    this.showToast("Reklam izlendi! Booster eklendi.");
+                }
+            }
+
+            startAdWindowCheck() {
+                // Reklam penceresini kontrol et
+                this.adCheckInterval = setInterval(() => {
+                    if (this.adWindow && this.adWindow.closed) {
+                        clearInterval(this.adCheckInterval);
+                        this.adWindow = null;
+                        // Reklam izlendi, booster ekle
+                        this.addBoosterByAd();
+                        this.hideAdModal();
+                        this.showToast("Reklam izlendi! Booster eklendi.");
+                    }
+                }, 500);
+            }
+
+            addBoosterByAd() {
+                if (this.requestedBooster) {
+                    // Sadece 1 adet booster ekle
+                    this.boosters.addByAd(this.requestedBooster);
+                    this.showToast(`🎉 +1 ${this.boosters.types[this.requestedBooster].name} kazandın!`);
+                }
+                this.requestedBooster = null;
+                
+                // Ad penceresi kontrolünü temizle
+                if (this.adCheckInterval) {
+                    clearInterval(this.adCheckInterval);
+                    this.adCheckInterval = null;
+                }
+            }
+
+            startGameFromShape() {
+                this.storage.update('settings', { shape: this.currentShape });
+                this.activeTheme = this.themes[this.currentShape] || this.themes.candy;
+                
+                // Mevcut seviyeyi yükle
+                const progress = this.storage.get('progress');
+                this.level = progress.currentLevel || 1;
+                
+                this.loadLevel(this.level);
+                this.showScreen('game-screen');
+            }
+
+            startGameFromLevels(level) {
+                this.level = level;
+                this.loadLevel(level);
+                this.showScreen('game-screen');
+            }
+
+            updateLevelsGrid() {
+                const grid = document.getElementById('levels-grid');
+                const progress = this.storage.get('progress');
+                const stats = this.storage.get('stats');
+                const levelTimes = stats.levelTimes || {};
+                const levelStars = stats.levelStars || {};
+                
+                grid.innerHTML = '';
+                
+                const unlockedLevels = progress.unlockedLevels || 1;
+                document.getElementById('open-levels').textContent = unlockedLevels;
+                
+                for (let i = 1; i <= 100; i++) {
+                    const levelBtn = document.createElement('button');
+                    levelBtn.className = 'level-btn';
+                    
+                    if (i <= unlockedLevels) {
+                        // Açık seviyeler
+                        levelBtn.onclick = () => this.startGameFromLevels(i);
+                        
+                        const levelTime = levelTimes[i];
+                        const stars = levelStars[i] || 0;
+                        
+                        if (levelTime) {
+                            levelBtn.classList.add('completed');
+                            const min = Math.floor(levelTime / 60);
+                            const sec = (levelTime % 60).toString().padStart(2, '0');
+                            
+                            levelBtn.innerHTML = `
+                                <div class="level-number">${i}</div>
+                                <div class="level-time">${min}:${sec}</div>
+                                ${stars > 0 ? `<div class="level-stars">${'⭐'.repeat(stars)}</div>` : ''}
+                            `;
+                        } else {
+                            levelBtn.innerHTML = `<div class="level-number">${i}</div>`;
+                        }
+                    } else {
+                        // Kilitli seviyeler
+                        levelBtn.classList.add('locked');
+                        levelBtn.innerHTML = `
+                            <div class="level-number">${i}</div>
+                            <div style="font-size:10px; margin-top:4px;">🔒</div>
+                        `;
+                    }
+                    
+                    grid.appendChild(levelBtn);
+                }
+            }
+
+            // === SEVİYE YÖNETİMİ ===
+            loadLevel(levelNum) {
+                const level = this.levels[levelNum - 1] || this.levels[0];
+                
+                this.level = level.id;
+                this.target = level.target;
+                this.moves = level.moves;
+                this.score = 0;
+                this.combo = 0;
+                this.maxCombo = 0;
+                this.gameTime = 0;
+                this.timeBonusActive = false;
+                this.currentBooster = null;
+                this.stats = { 
+                    matches: 0, 
+                    specials: 0, 
+                    time: 0, 
+                    colorMatches: {},
+                    currentStreak: 0,
+                    maxStreak: 0,
+                    specialsCreated: 0,
+                    specialsUsed: 0
+                };
+                
+                // Timer'ı durdur
+                if (this.timeInterval) {
+                    clearInterval(this.timeInterval);
+                    this.timeInterval = null;
+                }
+                
+                // Booster'ları kontrol et
+                this.checkAndRefillBoosters();
+                
+                document.getElementById('mode-indicator').textContent = `Mix Crush Seviye ${this.level}`;
+                
+                // Timer'ı başlat
+                this.startTimer();
+                this.createBoard();
+                this.render();
+                this.bindGameBoard();
+                this.updateUI();
+                this.boosters.updateUI();
+                
+                this.showToast(`Mix Crush Seviye ${this.level} başladı!`);
+            }
+
+            checkAndRefillBoosters() {
+                // Eksik olan booster'lara 1 adet ekle (max değeri geçmemek için)
+                const maxCounts = {
+                    hammer: 3,
+                    bomb: 2,
+                    shuffle: 1,
+                    fish: 2,
+                    coconut: 1
+                };
+                
+                Object.keys(this.boosters.types).forEach(key => {
+                    const booster = this.boosters.types[key];
+                    const maxCount = maxCounts[key];
+                    
+                    // Eksikse 1 adet ekle
+                    if (booster.count < maxCount) {
+                        booster.count += 1;
+                    }
+                });
+                
+                this.boosters.save();
+            }
+
+            startTimer() {
+                this.gameTime = 0;
+                this.updateTimeDisplay();
+                this.isTimerPaused = false;
+                
+                if (this.timeInterval) {
+                    clearInterval(this.timeInterval);
+                }
+                
+                this.timeInterval = setInterval(() => {
+                    if (!this.isTimerPaused) {
+                        this.gameTime++;
+                        this.updateTimeDisplay();
+                    }
+                }, 1000);
+            }
+
+            pauseTimer() {
+                this.isTimerPaused = true;
+            }
+
+            resumeTimer() {
+                this.isTimerPaused = false;
+            }
+
+            updateTimeDisplay() {
+                const minutes = Math.floor(this.gameTime / 60);
+                const seconds = this.gameTime % 60;
+                document.getElementById('time-display').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            // === OYUN MANTIĞI ===
+            createBoard() {
+                this.board = [];
+                for (let row = 0; row < this.size; row++) {
+                    this.board[row] = [];
+                    for (let col = 0; col < this.size; col++) {
+                        let candy;
+                        do {
+                            candy = this.createCandy(row, col);
+                        } while (this.checkInitialMatch(candy, row, col));
+                        this.board[row][col] = candy;
+                    }
+                }
+                
+                // Başlangıçta eşleşme olmamasını garantile
+                while (this.findMatches().length > 0) {
+                    this.createBoard();
+                }
+            }
+
+            createCandy(row, col) {
+                const typeIndex = Math.floor(Math.random() * this.activeTheme.emojis.length);
+                return {
+                    type: this.activeTheme.emojis[typeIndex],
+                    color: this.activeTheme.colors[typeIndex],
+                    colorIndex: typeIndex,
+                    row, col,
+                    element: null,
+                    special: null,
+                    isSpecial: false
+                };
+            }
+
+            checkInitialMatch(candy, row, col) {
+                if (col >= 2 && this.board[row][col - 1]?.type === candy.type && this.board[row][col - 2]?.type === candy.type) return true;
+                if (row >= 2 && this.board[row - 1][col]?.type === candy.type && this.board[row - 2][col]?.type === candy.type) return true;
+                return false;
+            }
+
+            render() {
+                const board = document.getElementById('game-board');
+                board.innerHTML = '';
+                
+                for (let row = 0; row < this.size; row++) {
+                    for (let col = 0; col < this.size; col++) {
+                        const candy = this.board[row][col];
+                        const div = document.createElement('div');
+                        div.className = 'candy';
+                        div.style.backgroundColor = candy.color;
+                        div.textContent = candy.type;
+                        div.dataset.row = row;
+                        div.dataset.col = col;
+                        
+                        // Font boyutunu dinamik ayarla
+                        const fontSize = Math.min(28, this.calculateCandySize() * 0.5);
+                        div.style.fontSize = `${fontSize}px`;
+                        
+                        // Özel şekerleri işaretle
+                        if (candy.special) {
+                            this.applySpecialEffects(div, candy.special);
+                            div.classList.add(`special-${candy.special}`);
+                        }
+                        
+                        candy.element = div;
+                        board.appendChild(div);
+                    }
+                }
+            }
+
+            applySpecialEffects(element, specialType) {
+                element.classList.add('candy');
+                
+                switch(specialType) {
+                    case 'striped':
+                        element.classList.add('special-striped');
+                        element.textContent = '🎇';
+                        break;
+                    case 'wrapped':
+                        element.classList.add('special-wrapped');
+                        element.textContent = '🎁';
+                        break;
+                    case 'color-bomb':
+                        element.classList.add('special-color-bomb');
+                        element.textContent = '💣';
+                        break;
+                    case 'fish':
+                        element.classList.add('special-fish');
+                        element.textContent = '🐟';
+                        break;
+                    case 'coconut':
+                        element.classList.add('special-coconut');
+                        element.textContent = '🥥';
+                        break;
+                }
+            }
+
+            bindGameBoard() {
+                const board = document.getElementById('game-board');
+                board.onclick = (e) => {
+                    if (this.currentBooster) {
+                        // Booster aktifse tüm tahtaya tıklama
+                        if (e.target.classList.contains('candy')) {
+                            const row = +e.target.dataset.row;
+                            const col = +e.target.dataset.col;
+                            if (!isNaN(row) && !isNaN(col)) {
+                                this.useActiveBooster(this.board[row][col]);
+                            }
+                        }
+                        return;
+                    }
+                    
+                    if (!e.target.classList.contains('candy')) return;
+                    
+                    const row = +e.target.dataset.row;
+                    const col = +e.target.dataset.col;
+                    
+                    if (isNaN(row) || isNaN(col) || this.isBusy || this.moves <= 0) return;
+                    
+                    this.clickCandy(this.board[row][col]);
+                };
+            }
+
+            clickCandy(candy) {
+                this.audio.playSound('click');
+                
+                if (!this.selected) {
+                    this.select(candy);
+                } else if (this.selected === candy) {
+                    this.deselect();
+                } else {
+                    if (this.areNeighbors(this.selected, candy)) {
+                        this.swapCandies(this.selected, candy);
+                    } else {
+                        this.deselect();
+                        this.select(candy);
+                    }
+                }
+            }
+
+            useBooster(type) {
+                if (this.currentBooster === type) {
+                    this.cancelBooster();
+                    return;
+                }
+                
+                const canUse = this.boosters.use(type);
+                if (canUse) {
+                    this.currentBooster = type;
+                    this.showGameNotification(`${this.boosters.types[type].name} aktif! Bir şekere tıkla.`);
+                    this.audio.playSound('special');
+                }
+            }
+
+            useActiveBooster(candy) {
+                if (!this.currentBooster || this.isBusy) return;
+                
+                this.boosters.activate(candy, this.currentBooster);
+                this.currentBooster = null;
+                
+                this.moves--;
+                
+                this.updateUI();
+                this.checkWin();
+            }
+
+            cancelBooster() {
+                this.currentBooster = null;
+                this.showGameNotification("Booster iptal edildi.");
+            }
+
+            select(candy) {
+                this.selected = candy;
+                if (candy.element) {
+                    candy.element.classList.add('selected');
+                }
+            }
+
+            deselect() {
+                if (this.selected && this.selected.element) {
+                    this.selected.element.classList.remove('selected');
+                }
+                this.selected = null;
+            }
+
+            areNeighbors(candy1, candy2) {
+                const rowDiff = Math.abs(candy1.row - candy2.row);
+                const colDiff = Math.abs(candy1.col - candy2.col);
+                return (rowDiff === 1 && colDiff === 0) || (rowDiff === 0 && colDiff === 1);
+            }
+
+            async swapCandies(candy1, candy2) {
+                this.isBusy = true;
+                
+                // Özel şeker kombinasyonlarını kontrol et
+                if (this.checkSpecialCombination(candy1, candy2)) {
+                    this.deselect();
+                    this.isBusy = false;
+                    return;
+                }
+                
+                const temp = this.board[candy1.row][candy1.col];
+                this.board[candy1.row][candy1.col] = this.board[candy2.row][candy2.col];
+                this.board[candy2.row][candy2.col] = temp;
+                
+                [candy1.row, candy2.row] = [candy2.row, candy1.row];
+                [candy1.col, candy2.col] = [candy2.col, candy1.col];
+                
+                this.audio.playSound('swap');
+                this.render();
+                await this.sleep(250);
+                
+                const matches = this.findMatches();
+                if (matches.length > 0) {
+                    this.moves--;
+                    this.combo++;
+                    this.maxCombo = Math.max(this.maxCombo, this.combo);
+                    
+                    await this.processMatches(matches);
+                    this.deselect();
+                } else {
+                    const temp = this.board[candy1.row][candy1.col];
+                    this.board[candy1.row][candy1.col] = this.board[candy2.row][candy2.col];
+                    this.board[candy2.row][candy2.col] = temp;
+                    
+                    [candy1.row, candy2.row] = [candy2.row, candy1.row];
+                    [candy1.col, candy2.col] = [candy2.col, candy1.col];
+                    
+                    this.render();
+                    this.deselect();
+                    this.audio.playSound('error');
+                }
+                
+                this.isBusy = false;
+                this.updateUI();
+                this.checkWin();
+            }
+
+            checkSpecialCombination(candy1, candy2) {
+                // İki özel şekeri birleştirme
+                if (candy1.special && candy2.special) {
+                    this.activateSpecialCombination(candy1, candy2);
+                    return true;
+                }
+                
+                // Özel şeker ile normal şekeri birleştirme
+                if (candy1.special) {
+                    this.activateSpecialWithNormal(candy1, candy2);
+                    return true;
+                }
+                if (candy2.special) {
+                    this.activateSpecialWithNormal(candy2, candy1);
+                    return true;
+                }
+                
+                return false;
+            }
+
+            activateSpecialCombination(candy1, candy2) {
+                let matches = [];
+                const type1 = candy1.special;
+                const type2 = candy2.special;
+                
+                this.showGameNotification(`✨ İki özel şeker birleşti!`);
+                this.stats.specialsUsed += 2;
+                
+                if ((type1 === 'color-bomb' && type2 === 'color-bomb') || 
+                    (type2 === 'color-bomb' && type1 === 'color-bomb')) {
+                    // İki renk bombası: tüm tahtayı temizle
+                    matches = this.getAllCandies();
+                    this.showGameNotification("💥 MEGA PATLAMA! Tüm şekerler temizlendi!");
+                } 
+                else if ((type1 === 'color-bomb' && type2 === 'striped') || 
+                         (type2 === 'color-bomb' && type1 === 'striped')) {
+                    // Renk bombası + çizgili: tüm aynı renkleri stripe yap
+                    const colorIndex = type1 === 'color-bomb' ? candy2.colorIndex : candy1.colorIndex;
+                    matches = this.getCandiesByColor(colorIndex);
+                    this.convertToSpecial(matches, 'striped');
+                    this.showGameNotification("🌈 Tüm aynı renkler çizgili şekere dönüştü!");
+                }
+                else if ((type1 === 'striped' && type2 === 'striped')) {
+                    // İki çizgili: çapraz satır ve sütun temizle
+                    matches = this.getCrossCandies(candy1.row, candy1.col, candy2.row, candy2.col);
+                    this.showGameNotification("❌ ÇAPRAZ TEMİZLİK!");
+                }
+                else if ((type1 === 'wrapped' && type2 === 'wrapped')) {
+                    // İki wrapped: 5x5 alan temizle
+                    matches = this.getAreaCandies(candy1.row, candy1.col, 5);
+                    this.showGameNotification("💣 BÜYÜK PATLAMA! 5x5 alan temizlendi!");
+                }
+                else if ((type1 === 'fish' && type2 === 'fish')) {
+                    // İki balık: tüm rastgele şekerleri temizle
+                    matches = this.getRandomCandies(12);
+                    this.showGameNotification("🐟🐟 BALIK SÜRÜSÜ! 12 şeker temizlendi!");
+                }
+                else if ((type1 === 'coconut' && type2 === 'coconut')) {
+                    // İki hindistan cevizi: iki sütun temizle
+                    matches = [...this.getColumnCandies(candy1.col), ...this.getColumnCandies(candy2.col)];
+                    this.showGameNotification("🥥🥥 ÇİFT SÜTUN TEMİZLİĞİ!");
+                }
+                
+                this.processSpecialMatches(matches, 500);
+                return true;
+            }
+
+            activateSpecialWithNormal(specialCandy, normalCandy) {
+                let matches = [];
+                this.stats.specialsUsed++;
+                
+                switch(specialCandy.special) {
+                    case 'striped':
+                        // Çizgili şeker: tüm satır veya sütun temizle
+                        if (Math.random() > 0.5) {
+                            matches = this.getRowCandies(specialCandy.row);
+                            this.showGameNotification("➡️ Tüm satır temizlendi!");
+                        } else {
+                            matches = this.getColumnCandies(specialCandy.col);
+                            this.showGameNotification("⬇️ Tüm sütun temizlendi!");
+                        }
+                        break;
+                        
+                    case 'wrapped':
+                        // Wrapped şeker: 3x3 alan temizle
+                        matches = this.getAreaCandies(specialCandy.row, specialCandy.col, 3);
+                        this.showGameNotification("💥 3x3 alan temizlendi!");
+                        break;
+                        
+                    case 'color-bomb':
+                        // Renk bombası: tüm aynı renkleri temizle
+                        matches = this.getCandiesByColor(normalCandy.colorIndex);
+                        this.showGameNotification(`🎨 Tüm ${normalCandy.type} şekerleri temizlendi!`);
+                        break;
+                        
+                    case 'fish':
+                        // Balık: rastgele 3 şeker temizle
+                        matches = this.getRandomCandies(3);
+                        this.showGameNotification("🐟 Balık 3 rastgele şekeri yedi!");
+                        break;
+                        
+                    case 'coconut':
+                        // Hindistan cevizi: tüm sütun temizle
+                        matches = this.getColumnCandies(specialCandy.col);
+                        this.showGameNotification("🥥 Hindistan cevizi tüm sütunu temizledi!");
+                        break;
+                }
+                
+                this.processSpecialMatches(matches, 300);
+                return true;
+            }
+
+            processSpecialMatches(matches, pointsMultiplier = 100) {
+                if (matches.length === 0) return;
+                
+                this.stats.matches += matches.length;
+                this.stats.specials++;
+                
+                let points = matches.length * pointsMultiplier * (1 + this.combo * 0.2);
+                if (this.timeBonusActive) {
+                    points *= 1.1;
+                }
+                this.score += points;
+                
+                this.audio.playSound('special');
+                this.particles.createBurst(window.innerWidth / 2, window.innerHeight / 2, 'special');
+                
+                // Eşleşen şekerleri kaldır
+                matches.forEach(candy => {
+                    if (candy.element) {
+                        candy.element.classList.add('matched');
+                    }
+                    this.board[candy.row][candy.col] = null;
+                });
+                
+                // Şekerleri düşür ve boşlukları doldur
+                setTimeout(() => {
+                    this.dropCandies();
+                    this.fillEmpty();
+                    this.render();
+                    
+                    // Yeni eşleşmeleri kontrol et
+                    setTimeout(() => {
+                        const newMatches = this.findMatches();
+                        if (newMatches.length > 0) {
+                            this.processMatches(newMatches);
+                        }
+                        this.updateUI();
+                        this.checkWin();
+                    }, 150);
+                }, 500);
+                
+                this.moves--;
+            }
+
+            findMatches() {
+                const matches = new Set();
+                
+                // Yatay eşleşmeler
+                for (let row = 0; row < this.size; row++) {
+                    for (let col = 0; col < this.size - 2; col++) {
+                        const candy1 = this.board[row][col];
+                        const candy2 = this.board[row][col + 1];
+                        const candy3 = this.board[row][col + 2];
+                        
+                        if (candy1 && candy2 && candy3 &&
+                            candy1.type === candy2.type && 
+                            candy2.type === candy3.type) {
+                            matches.add(candy1);
+                            matches.add(candy2);
+                            matches.add(candy3);
+                            
+                            // Uzun eşleşmeleri kontrol et
+                            for (let c = col + 3; c < this.size; c++) {
+                                const nextCandy = this.board[row][c];
+                                if (nextCandy && nextCandy.type === candy1.type) {
+                                    matches.add(nextCandy);
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Dikey eşleşmeler
+                for (let col = 0; col < this.size; col++) {
+                    for (let row = 0; row < this.size - 2; row++) {
+                        const candy1 = this.board[row][col];
+                        const candy2 = this.board[row + 1][col];
+                        const candy3 = this.board[row + 2][col];
+                        
+                        if (candy1 && candy2 && candy3 &&
+                            candy1.type === candy2.type && 
+                            candy2.type === candy3.type) {
+                            matches.add(candy1);
+                            matches.add(candy2);
+                            matches.add(candy3);
+                            
+                            // Uzun eşleşmeleri kontrol et
+                            for (let r = row + 3; r < this.size; r++) {
+                                const nextCandy = this.board[r][col];
+                                if (nextCandy && nextCandy.type === candy1.type) {
+                                    matches.add(nextCandy);
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                return Array.from(matches);
+            }
+
+            async processMatches(matches) {
+                if (matches.length === 0) return;
+                
+                this.stats.matches += matches.length;
+                this.stats.currentStreak += matches.length;
+                this.stats.maxStreak = Math.max(this.stats.maxStreak, this.stats.currentStreak);
+                
+                // Özel şeker oluştur
+                const specialCandy = this.createSpecialCandy(matches);
+                if (specialCandy) {
+                    this.stats.specialsCreated++;
+                }
+                
+                let basePoints = 100 * matches.length;
+                let comboBonus = this.combo * 0.2;
+                let totalMultiplier = 1 + comboBonus;
+                
+                let points = Math.floor(basePoints * totalMultiplier);
+                this.score += points;
+                
+                this.audio.playSound(this.combo > 1 ? 'combo' : 'match');
+                this.particles.createBurst(window.innerWidth / 2, window.innerHeight / 2, 'match');
+                
+                // Oyun bildirimleri
+                if (matches.length >= 5) {
+                    this.showGameNotification("🔥 Müthiş! 5+ şeker eşleştirdin!");
+                } else if (matches.length === 4) {
+                    this.showGameNotification("✨ Harika! 4 şeker eşleştirdin!");
+                } else if (this.combo > 3) {
+                    this.showGameNotification(`🎯 Combo ${this.combo}x!`);
+                }
+                
+                // Eşleşen şekerleri kaldır
+                matches.forEach(candy => {
+                    if (candy.element) {
+                        candy.element.classList.add('matched');
+                    }
+                    this.board[candy.row][candy.col] = null;
+                });
+                
+                await this.sleep(500);
+                
+                // Şekerleri düşür ve boşlukları doldur
+                this.dropCandies();
+                this.fillEmpty();
+                
+                await this.sleep(150);
+                
+                // Yeni eşleşmeleri kontrol et
+                const newMatches = this.findMatches();
+                if (newMatches.length > 0) {
+                    await this.processMatches(newMatches);
+                } else {
+                    this.combo = 0;
+                    this.stats.currentStreak = 0;
+                }
+            }
+
+            createSpecialCandy(matches) {
+                if (matches.length >= 5) {
+                    // 5+ eşleşme: renk bombası
+                    const center = matches[Math.floor(matches.length / 2)];
+                    center.special = 'color-bomb';
+                    center.isSpecial = true;
+                    this.stats.specials++;
+                    this.showGameNotification("💣 Renk Bombası Oluştu!");
+                    return center;
+                } else if (matches.length === 4) {
+                    // 4 eşleşme: wrapped veya striped
+                    const center = matches[Math.floor(matches.length / 2)];
+                    // Yatay veya dikey kontrolü
+                    const isHorizontal = this.checkHorizontalMatch(matches);
+                    center.special = isHorizontal ? 'striped' : 'wrapped';
+                    center.isSpecial = true;
+                    this.stats.specials++;
+                    this.showGameNotification(isHorizontal ? "🎇 Çizgili Şeker Oluştu!" : "🎁 Paketli Şeker Oluştu!");
+                    return center;
+                } else if (matches.length === 3) {
+                    // 3 eşleşmede %10 şansla balık veya hindistan cevizi
+                    if (Math.random() < 0.1) {
+                        const center = matches[Math.floor(matches.length / 2)];
+                        center.special = Math.random() > 0.5 ? 'fish' : 'coconut';
+                        center.isSpecial = true;
+                        this.stats.specials++;
+                        this.showGameNotification(center.special === 'fish' ? "🐟 Balık Oluştu!" : "🥥 Hindistan Cevizi Oluştu!");
+                        return center;
+                    }
+                }
+                return null;
+            }
+
+            checkHorizontalMatch(matches) {
+                // Eşleşmelerin aynı satırda olup olmadığını kontrol et
+                const firstRow = matches[0].row;
+                return matches.every(candy => candy.row === firstRow);
+            }
+
+            dropCandies() {
+                for (let col = 0; col < this.size; col++) {
+                    let emptyRow = this.size - 1;
+                    
+                    for (let row = this.size - 1; row >= 0; row--) {
+                        if (this.board[row][col]) {
+                            if (row !== emptyRow) {
+                                this.board[emptyRow][col] = this.board[row][col];
+                                this.board[emptyRow][col].row = emptyRow;
+                                this.board[row][col] = null;
+                            }
+                            emptyRow--;
+                        }
+                    }
+                }
+            }
+
+            fillEmpty() {
+                for (let row = 0; row < this.size; row++) {
+                    for (let col = 0; col < this.size; col++) {
+                        if (!this.board[row][col]) {
+                            this.board[row][col] = this.createCandy(row, col);
+                        }
+                    }
+                }
+                this.render();
+            }
+
+            // === ÖZEL ŞEKER YARDIMCI FONKSİYONLARI ===
+            getAllCandies() {
+                const allCandies = [];
+                for (let row = 0; row < this.size; row++) {
+                    for (let col = 0; col < this.size; col++) {
+                        if (this.board[row][col]) {
+                            allCandies.push(this.board[row][col]);
+                        }
+                    }
+                }
+                return allCandies;
+            }
+
+            getCandiesByColor(colorIndex) {
+                const candies = [];
+                for (let row = 0; row < this.size; row++) {
+                    for (let col = 0; col < this.size; col++) {
+                        const candy = this.board[row][col];
+                        if (candy && candy.colorIndex === colorIndex) {
+                            candies.push(candy);
+                        }
+                    }
+                }
+                return candies;
+            }
+
+            getRowCandies(row) {
+                const candies = [];
+                for (let col = 0; col < this.size; col++) {
+                    if (this.board[row][col]) {
+                        candies.push(this.board[row][col]);
+                    }
+                }
+                return candies;
+            }
+
+            getColumnCandies(col) {
+                const candies = [];
+                for (let row = 0; row < this.size; row++) {
+                    if (this.board[row][col]) {
+                        candies.push(this.board[row][col]);
+                    }
+                }
+                return candies;
+            }
+
+            getAreaCandies(row, col, size) {
+                const candies = [];
+                const halfSize = Math.floor(size / 2);
+                const startRow = Math.max(0, row - halfSize);
+                const endRow = Math.min(this.size - 1, row + halfSize);
+                const startCol = Math.max(0, col - halfSize);
+                const endCol = Math.min(this.size - 1, col + halfSize);
+                
+                for (let r = startRow; r <= endRow; r++) {
+                    for (let c = startCol; c <= endCol; c++) {
+                        if (this.board[r][c]) {
+                            candies.push(this.board[r][c]);
+                        }
+                    }
+                }
+                return candies;
+            }
+
+            getCrossCandies(row1, col1, row2, col2) {
+                const candies = new Set();
+                
+                // İlk şekerin satırı ve sütunu
+                for (let col = 0; col < this.size; col++) {
+                    if (this.board[row1][col]) {
+                        candies.add(this.board[row1][col]);
+                    }
+                }
+                for (let row = 0; row < this.size; row++) {
+                    if (this.board[row][col1]) {
+                        candies.add(this.board[row][col1]);
+                    }
+                }
+                
+                // İkinci şekerin satırı ve sütunu
+                for (let col = 0; col < this.size; col++) {
+                    if (this.board[row2][col]) {
+                        candies.add(this.board[row2][col]);
+                    }
+                }
+                for (let row = 0; row < this.size; row++) {
+                    if (this.board[row][col2]) {
+                        candies.add(this.board[row][col2]);
+                    }
+                }
+                
+                return Array.from(candies);
+            }
+
+            getRandomCandies(count) {
+                const allCandies = this.getAllCandies();
+                const shuffled = [...allCandies].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, Math.min(count, shuffled.length));
+            }
+
+            convertToSpecial(candies, specialType) {
+                candies.forEach(candy => {
+                    candy.special = specialType;
+                    candy.isSpecial = true;
+                });
+            }
+
+            // === OYUN DURUMU ===
+            updateUI() {
+                document.getElementById('score-display').textContent = this.score.toLocaleString('tr-TR');
+                document.getElementById('moves-display').textContent = this.moves;
+                document.getElementById('level-display').textContent = this.level;
+            }
+
+            checkWin() {
+                if (this.score >= this.target) {
+                    this.win();
+                } else if (this.moves <= 0) {
+                    this.lose();
+                }
+            }
+
+            win() {
+                if (this.timeInterval) {
+                    clearInterval(this.timeInterval);
+                    this.timeInterval = null;
+                }
+                
+                // İstatistikleri güncelle
+                const stats = this.storage.get('stats');
+                stats.totalGames = (stats.totalGames || 0) + 1;
+                stats.totalScore = (stats.totalScore || 0) + this.score;
+                stats.totalTime = (stats.totalTime || 0) + this.gameTime * 1000;
+                stats.bestCombo = Math.max(stats.bestCombo || 0, this.maxCombo);
+                stats.bestScore = Math.max(stats.bestScore || 0, this.score);
+                stats.specialCandiesCreated = (stats.specialCandiesCreated || 0) + this.stats.specialsCreated;
+                stats.totalMatches = (stats.totalMatches || 0) + this.stats.matches;
+                
+                // Seviye süresini kaydet
+                const levelTimes = stats.levelTimes || {};
+                const currentTime = levelTimes[this.level] || Infinity;
+                if (this.gameTime < currentTime) {
+                    levelTimes[this.level] = this.gameTime;
+                }
+                stats.levelTimes = levelTimes;
+                
+                // Seviye yıldızlarını hesapla ve kaydet
+                const levelStars = stats.levelStars || {};
+                const stars = this.calculateStars();
+                levelStars[this.level] = Math.max(levelStars[this.level] || 0, stars);
+                stats.levelStars = levelStars;
+                
+                // Tamamlanan seviyeleri hesapla
+                const completedLevels = Object.keys(levelTimes).length;
+                stats.completedLevels = completedLevels;
+                
+                // İlerlemeyi güncelle
+                const progress = this.storage.get('progress');
+                progress.currentLevel = Math.min(this.level + 1, 100);
+                progress.unlockedLevels = Math.max(progress.unlockedLevels || 1, progress.currentLevel);
+                
+                this.storage.set('stats', stats);
+                this.storage.set('progress', progress);
+                
+                this.fillGameOver(true);
+                this.showModal('game-over-modal');
+                this.audio.playSound('win');
+            }
+
+            lose() {
+                if (this.timeInterval) {
+                    clearInterval(this.timeInterval);
+                    this.timeInterval = null;
+                }
+                this.fillGameOver(false);
+                this.showModal('game-over-modal');
+                this.audio.playSound('lose');
+            }
+
+            calculateStars() {
+                const percent = this.score / this.target;
+                if (percent >= 1.5) return 3;
+                if (percent >= 1.2) return 2;
+                if (percent >= 1) return 1;
+                return 0;
+            }
+
+            fillGameOver(won) {
+                document.getElementById('game-over-title').textContent = 
+                    won ? '🎉 Mix Crush Seviye Tamamlandı!' : '😔 Oyun Bitti!';
+                
+                document.getElementById('final-score').textContent = this.score.toLocaleString('tr-TR');
+                
+                const min = Math.floor(this.gameTime / 60);
+                const sec = (this.gameTime % 60).toString().padStart(2, '0');
+                document.getElementById('level-time').textContent = `${min}:${sec}`;
+                document.getElementById('max-combo').textContent = this.maxCombo;
+                document.getElementById('special-count').textContent = this.stats.specials;
+                const efficiency = this.target > 0 ? Math.round((this.score / this.target) * 100) : 0;
+                document.getElementById('efficiency').textContent = efficiency;
+                
+                // Kazanıldıysa sonraki seviye butonunu göster
+                document.getElementById('next-level-btn').style.display = won ? 'flex' : 'none';
+            }
+
+            nextLevel() {
+                this.hideModal('game-over-modal');
+                this.loadLevel(this.level + 1);
+                this.showToast(`Mix Crush Seviye ${this.level} başladı!`);
+            }
+
+            restartLevel() {
+                this.hideModal('game-over-modal');
+                this.loadLevel(this.level);
+            }
+
+            // === AYARLAR ===
+            applySettings() {
+                const settings = this.storage.get('settings');
+                this.particles.enabled = settings.effects;
+                
+                if (settings.darkMode) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+                
+                document.getElementById('sfx-volume').value = settings.sfx;
+                document.getElementById('music-volume').value = settings.music;
+                document.getElementById('effects-toggle').checked = settings.effects;
+                document.getElementById('dark-mode-toggle').checked = settings.darkMode;
+                
+                document.getElementById('sfx-value').textContent = `${settings.sfx}%`;
+                document.getElementById('music-value').textContent = `${settings.music}%`;
+            }
+
+            // === İSTATİSTİKLER ===
+            updateStats() {
+                const stats = this.storage.get('stats');
+                const progress = this.storage.get('progress');
+                const levelTimes = stats.levelTimes || {};
+                const levelStars = stats.levelStars || {};
+                
+                document.getElementById('total-games').textContent = stats.totalGames || 0;
+                document.getElementById('total-score').textContent = (stats.totalScore || 0).toLocaleString('tr-TR');
+                document.getElementById('total-time').textContent = this.formatTime(stats.totalTime || 0);
+                document.getElementById('best-combo').textContent = stats.bestCombo || 0;
+                
+                document.getElementById('best-score').textContent = (stats.bestScore || 0).toLocaleString('tr-TR');
+                
+                // En hızlı seviye
+                let fastestLevel = null;
+                let fastestTime = Infinity;
+                Object.keys(levelTimes).forEach(level => {
+                    if (levelTimes[level] < fastestTime) {
+                        fastestTime = levelTimes[level];
+                        fastestLevel = level;
+                    }
+                });
+                
+                if (fastestLevel) {
+                    const min = Math.floor(fastestTime / 60);
+                    const sec = (fastestTime % 60).toString().padStart(2, '0');
+                    document.getElementById('fastest-level').textContent = `Seviye ${fastestLevel}: ${min}:${sec}`;
+                } else {
+                    document.getElementById('fastest-level').textContent = '-';
+                }
+                
+                // Tamamlanan seviyeler
+                const completedLevels = Object.keys(levelTimes).length;
+                document.getElementById('completed-levels').textContent = `${completedLevels}/100`;
+                
+                document.getElementById('total-specials').textContent = stats.specialCandiesCreated || 0;
+                document.getElementById('total-matches').textContent = stats.totalMatches || 0;
+                
+                // Seviye sürelerini göster
+                const levelTimesContainer = document.getElementById('level-times');
+                levelTimesContainer.innerHTML = '';
+                
+                const sortedLevels = Object.keys(levelTimes).sort((a, b) => b - a).slice(0, 10);
+                
+                if (sortedLevels.length === 0) {
+                    levelTimesContainer.innerHTML = '<div class="text-center" style="color:#999; padding:15px; font-size:14px;">Henüz seviye tamamlanmadı</div>';
+                } else {
+                    sortedLevels.forEach(level => {
+                        const time = levelTimes[level];
+                        const stars = levelStars[level] || 0;
+                        const min = Math.floor(time / 60);
+                        const sec = (time % 60).toString().padStart(2, '0');
+                        
+                        const item = document.createElement('div');
+                        item.className = 'level-time-item';
+                        item.innerHTML = `
+                            <div class="level-time-number">Seviye ${level}</div>
+                            <div>
+                                <div class="level-time-value">${min}:${sec}</div>
+                                ${stars > 0 ? `<div style="font-size:10px; color:var(--gold);">${'⭐'.repeat(stars)}</div>` : ''}
+                            </div>
+                        `;
+                        levelTimesContainer.appendChild(item);
+                    });
+                }
+            }
+
+            formatTime(ms) {
+                const totalSeconds = Math.floor(ms / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                
+                if (hours > 0) {
+                    return `${hours}sa ${minutes}dk`;
+                } else if (minutes > 0) {
+                    return `${minutes}dk ${seconds}sn`;
+                } else {
+                    return `${seconds}sn`;
+                }
+            }
+
+            // === EKRAN BOYUTLANDIRMA ===
+            adjustBoardSize() {
+                const gameContainer = document.getElementById('game-container');
+                if (!gameContainer) return;
+                
+                // Ekran genişliğini al
+                const screenWidth = window.innerWidth;
+                const containerWidth = Math.min(screenWidth - 30, 450); // Max 450px
+                
+                // Boşlukları hesapla
+                const horizontalPadding = 30; // Sol + Sağ padding
+                const boardPadding = 20; // Board iç padding
+                const gapSize = 1; // Şekerler arası gap
+                
+                // Kullanılabilir alanı hesapla
+                const availableWidth = containerWidth - horizontalPadding - boardPadding;
+                
+                // Şeker boyutunu hesapla (8 şeker + 7 gap)
+                const candySize = Math.max(36, Math.min(50, (availableWidth - (7 * gapSize)) / 8));
+                
+                // CSS değişkenini güncelle
+                document.documentElement.style.setProperty('--candy-size', `${candySize}px`);
+                
+                // Board'u yeniden render et
+                if (this.board.length > 0) {
+                    this.render();
+                }
+            }
+
+            calculateCandySize() {
+                const computedStyle = getComputedStyle(document.documentElement);
+                const candySize = parseFloat(computedStyle.getPropertyValue('--candy-size'));
+                return candySize || 40;
+            }
+
+            // === UTILITIES ===
+            showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.remove('hidden');
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                    }, 300);
+                }, 2500);
+            }
+
+            showGameNotification(message) {
+                // Oyun sırasında gösterilen bildirimler
+                const now = Date.now();
+                if (now - this.lastNotificationTime > 2000) { // 2 saniyede bir
+                    this.showToast(message);
+                    this.lastNotificationTime = now;
+                }
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // === STORAGE MANAGER ===
+        class StorageManager {
+            constructor() {
+                this.prefix = 'mix_crush_pro_levels_';
+                this.data = {
+                    settings: { 
+                        sfx: 70, 
+                        music: 50, 
+                        effects: true, 
+                        darkMode: false, 
+                        shape: 'candy' 
+                    },
+                    stats: { 
+                        totalGames: 0, 
+                        totalScore: 0, 
+                        totalTime: 0, 
+                        bestCombo: 0,
+                        bestScore: 0,
+                        specialCandiesCreated: 0,
+                        totalMatches: 0,
+                        levelTimes: {},
+                        levelStars: {},
+                        completedLevels: 0
+                    },
+                    progress: { 
+                        currentLevel: 1, 
+                        unlockedLevels: 1,
+                        boosters: { hammer: 3, bomb: 2, shuffle: 1, fish: 2, coconut: 1 }
+                    }
+                };
+                this.load();
+            }
+            
+            load() {
+                Object.keys(this.data).forEach(key => {
+                    const saved = localStorage.getItem(this.prefix + key);
+                    if (saved) {
+                        try { 
+                            this.data[key] = JSON.parse(saved); 
+                        } catch(e) {
+                            console.warn('Failed to load', key, e);
+                        }
+                    }
+                });
+            }
+            
+            save(key) { 
+                localStorage.setItem(this.prefix + key, JSON.stringify(this.data[key])); 
+            }
+            
+            get(key) { 
+                return this.data[key]; 
+            }
+            
+            set(key, value) { 
+                this.data[key] = value; 
+                this.save(key); 
+            }
+            
+            update(key, updates) {
+                this.data[key] = { ...this.data[key], ...updates };
+                this.save(key);
+            }
+            
+            reset() { 
+                localStorage.clear(); 
+                location.reload();
+            }
+        }
+
+        // === AUDIO MANAGER ===
+        class AudioManager {
+            constructor(storage) {
+                this.storage = storage;
+                this.sounds = {};
+                this.isMuted = false;
+                this.init();
+            }
+            
+            init() {
+                this.createSound('match', 600, 0.15);
+                this.createSound('swap', 400, 0.1);
+                this.createSound('click', 800, 0.05);
+                this.createSound('error', 200, 0.2);
+                this.createSound('win', [523.25, 659.25, 783.99], 0.5);
+                this.createSound('lose', [261.63, 220, 196], 0.4);
+                this.createSound('special', 1000, 0.25);
+                this.createSound('combo', [1200, 1400, 1600], 0.3);
+                this.createSound('boom', 150, 0.3);
+            }
+            
+            createSound(name, frequency, duration) {
+                this.sounds[name] = { frequency, duration };
+            }
+            
+            playSound(type) {
+                if (this.isMuted || !this.storage.get('settings').effects) return;
+                
+                const sound = this.sounds[type];
+                if (!sound) return;
+                
+                const volume = this.storage.get('settings').sfx / 100 * 0.3;
+                
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    if (Array.isArray(sound.frequency)) {
+                        const now = audioContext.currentTime;
+                        sound.frequency.forEach((freq, i) => {
+                            oscillator.frequency.setValueAtTime(freq, now + i * 0.1);
+                        });
+                    } else {
+                        oscillator.frequency.setValueAtTime(sound.frequency, audioContext.currentTime);
+                    }
+                    
+                    oscillator.type = 'sine';
+                    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + sound.duration);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + sound.duration);
+                } catch (e) {
+                    console.warn('Audio error:', e);
+                }
+            }
+            
+            setVolume(type, value) {
+                const settings = this.storage.get('settings');
+                settings[type] = value;
+                this.storage.set('settings', settings);
+            }
+        }
+
+        // === PARTICLE SYSTEM ===
+        class ParticleSystem {
+            constructor(storage) {
+                this.storage = storage;
+                this.enabled = true;
+            }
+            
+            createBurst(x, y, type = 'match') {
+                if (!this.enabled || !this.storage.get('settings').effects) return;
+                
+                const particleCount = type === 'special' ? 15 : type === 'boom' ? 20 : 8;
+                const colors = type === 'special' ? 
+                    ['#FFD700', '#FF69B4', '#00CED1', '#32CD32', '#FF6347', '#9370DB', '#00BFFF'] :
+                    ['#FFD700', '#FF69B4', '#00CED1', '#32CD32', '#FF6347'];
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    const size = Math.random() * 8 + 4;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    particle.style.cssText = `
+                        position: fixed;
+                        width: ${size}px;
+                        height: ${size}px;
+                        background: ${color};
+                        border-radius: 50%;
+                        left: ${x}px;
+                        top: ${y}px;
+                        pointer-events: none;
+                        z-index: 1000;
+                        transform: scale(0);
+                    `;
+                    
+                    document.body.appendChild(particle);
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const velocity = Math.random() * 3 + 2;
+                    const distance = velocity * 60;
+                    
+                    const animation = particle.animate([
+                        { 
+                            transform: 'scale(0) translate(0, 0)', 
+                            opacity: 1 
+                        },
+                        { 
+                            transform: 'scale(1) translate(0, 0)', 
+                            opacity: 1 
+                        },
+                        { 
+                            transform: `scale(0) translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance - 40}px)`, 
+                            opacity: 0 
+                        }
+                    ], {
+                        duration: 1000,
+                        easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                    });
+                    
+                    animation.onfinish = () => particle.remove();
+                }
+            }
+        }
+
+        // === BOOSTER MANAGER ===
+        class BoosterManager {
+            constructor(game, storage) {
+                this.game = game;
+                this.storage = storage;
+                this.types = {
+                    hammer: { count: 3, icon: '🔨', name: 'Çekiç', desc: 'Tek bir şekeri kır' },
+                    bomb: { count: 2, icon: '💣', name: 'Bomba', desc: '3x3 alandaki şekerleri patlat' },
+                    shuffle: { count: 1, icon: '🔀', name: 'Karıştır', desc: 'Tüm şekerleri karıştır' },
+                    fish: { count: 2, icon: '🐟', name: 'Balık', desc: 'Rastgele 3 şekeri temizle' },
+                    coconut: { count: 1, icon: '🥥', name: 'Hindistan Cevizi', desc: 'Tüm sütunu temizle' }
+                };
+                this.load();
+            }
+            
+            load() {
+                const saved = this.storage.get('progress').boosters;
+                Object.keys(this.types).forEach(key => {
+                    if (saved[key] !== undefined) {
+                        this.types[key].count = saved[key];
+                    }
+                });
+            }
+            
+            save() {
+                const data = {};
+                Object.keys(this.types).forEach(key => data[key] = this.types[key].count);
+                this.storage.update('progress', { boosters: data });
+            }
+            
+            use(type) {
+                const booster = this.types[type];
+                if (!booster || booster.count <= 0) {
+                    return false;
+                }
+                
+                booster.count--;
+                this.save();
+                this.updateUI();
+                return true;
+            }
+            
+            addByAd(type) {
+                const booster = this.types[type];
+                if (booster) {
+                    booster.count += 1; // Sadece 1 adet ekle
+                    this.save();
+                    this.updateUI();
+                }
+            }
+            
+            activate(candy, type) {
+                if (!type) return;
+                
+                this.game.audio.playSound('boom');
+                
+                switch (type) {
+                    case 'hammer':
+                        this.game.processMatches([candy]);
+                        break;
+                    case 'bomb':
+                        const matches = [];
+                        for (let r = Math.max(0, candy.row - 1); r <= Math.min(7, candy.row + 1); r++) {
+                            for (let c = Math.max(0, candy.col - 1); c <= Math.min(7, candy.col + 1); c++) {
+                                if (this.game.board[r][c]) {
+                                    matches.push(this.game.board[r][c]);
+                                }
+                            }
+                        }
+                        this.game.processSpecialMatches(matches, 200);
+                        break;
+                    case 'shuffle':
+                        this.game.createBoard();
+                        this.game.render();
+                        this.game.showGameNotification("🔀 Tahta karıştırıldı!");
+                        break;
+                    case 'fish':
+                        const fishMatches = this.game.getRandomCandies(3);
+                        this.game.processSpecialMatches(fishMatches, 150);
+                        break;
+                    case 'coconut':
+                        const coconutMatches = this.game.getColumnCandies(candy.col);
+                        this.game.processSpecialMatches(coconutMatches, 250);
+                        break;
+                }
+                
+                this.game.particles.createBurst(
+                    candy.element.offsetLeft + candy.element.offsetWidth / 2,
+                    candy.element.offsetTop + candy.element.offsetHeight / 2,
+                    'boom'
+                );
+            }
+            
+            updateUI() {
+                document.getElementById('hammer-count').textContent = this.types.hammer.count;
+                document.getElementById('bomb-count').textContent = this.types.bomb.count;
+                document.getElementById('shuffle-count').textContent = this.types.shuffle.count;
+                document.getElementById('fish-count').textContent = this.types.fish.count;
+                document.getElementById('coconut-count').textContent = this.types.coconut.count;
+                
+                document.querySelectorAll('.booster-btn').forEach(btn => {
+                    const type = btn.dataset.booster;
+                    const count = this.types[type].count;
+                    
+                    // Eski sınıfları temizle
+                    btn.classList.remove('disabled', 'out-of-stock');
+                    
+                    // "add+" badge'ini kaldır
+                    const existingAdd = btn.querySelector('.add-plus');
+                    if (existingAdd) {
+                        existingAdd.remove();
+                    }
+                    
+                    if (count === 0) {
+                        btn.classList.add('out-of-stock');
+                        
+                        // "add+" badge'ini ekle
+                        const addPlus = document.createElement('div');
+                        addPlus.className = 'add-plus';
+                        addPlus.textContent = 'add+';
+                        btn.appendChild(addPlus);
+                        
+                        btn.title = `${this.types[type].name} (Tükendi - Reklam izle!)`;
+                    } else {
+                        btn.classList.toggle('disabled', false);
+                        btn.title = `${this.types[type].name} - ${this.types[type].desc}`;
+                    }
+                });
+            }
+        }
+
+        // === OYUNU BAŞLAT ===
+        window.addEventListener('DOMContentLoaded', () => {
+            // Kaydırmayı engelle
+            document.addEventListener('touchmove', (e) => {
+                if (e.target.closest('#game-board') || e.target.closest('.modal')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Reklam penceresi mesajlarını dinle
+            window.addEventListener('message', (event) => {
+                if (event.data === 'ad_completed' && window.game) {
+                    window.game.addBoosterByAd();
+                    window.game.hideAdModal();
+                    window.game.showToast("🎉 Reklam izlendi! +1 Booster eklendi.");
+                }
+            });
+            
+            // Oyunu başlat
+            window.game = new MixCrushGame();
+            
+            // Ekran boyutunu ayarla
+            function adjustLayout() {
+                if (window.game && window.game.adjustBoardSize) {
+                    window.game.adjustBoardSize();
+                }
+            }
+            
+            adjustLayout();
+            window.addEventListener('resize', adjustLayout);
+            window.addEventListener('orientationchange', () => {
+                setTimeout(adjustLayout, 100);
+            });
+        });
+    </script>
+</body>
+</html>

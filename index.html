@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -157,6 +157,86 @@
         .start-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* === DİL SEÇİMİ === */
+        .lang-selector {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 9999;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            padding: 8px 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .lang-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 5px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 10px 0;
+            min-width: 180px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 9999;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .lang-dropdown.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .lang-option {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .lang-option:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .lang-option.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lang-flag {
+            font-size: 20px;
+        }
+
+        .lang-name {
+            font-size: 14px;
+            font-weight: 500;
         }
 
         /* === ŞEKİL SEÇİM === */
@@ -992,6 +1072,16 @@
             .levels-grid-container {
                 padding: 5px;
             }
+            
+            .lang-selector {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .lang-btn {
+                padding: 6px 12px;
+                min-width: 100px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1080,6 +1170,21 @@
             .levels-header {
                 margin-bottom: 10px;
             }
+            
+            .lang-selector {
+                top: 8px;
+                right: 8px;
+            }
+            
+            .lang-btn {
+                padding: 5px 10px;
+                min-width: 90px;
+                font-size: 14px;
+            }
+            
+            .lang-dropdown {
+                min-width: 160px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -1129,6 +1234,11 @@
             .level-btn {
                 font-size: 13px;
             }
+            
+            .lang-btn {
+                min-width: 80px;
+                padding: 4px 8px;
+            }
         }
 
         @media (max-width: 320px) {
@@ -1170,6 +1280,11 @@
             
             .level-btn {
                 padding: 8px 2px;
+                font-size: 12px;
+            }
+            
+            .lang-btn {
+                min-width: 70px;
                 font-size: 12px;
             }
         }
@@ -1235,25 +1350,37 @@
     </style>
 </head>
 <body>
+    <!-- DİL SEÇİMİ -->
+    <div class="lang-selector">
+        <button id="lang-btn" class="lang-btn">
+            <span id="current-lang-flag">🇬🇧</span>
+            <span id="current-lang-name">English</span>
+            <span style="font-size:12px;">▼</span>
+        </button>
+        <div id="lang-dropdown" class="lang-dropdown">
+            <!-- Diller JavaScript ile eklenecek -->
+        </div>
+    </div>
+
     <!-- ANA MENÜ -->
     <div id="start-screen" class="screen active">
         <div class="start-container">
             <div class="start-logo">🔀</div>
-            <h1 class="start-title">MIX CRUSH</h1>
-            <p class="start-subtitle">Karıştır, Eşleştir, Kazan!</p>
+            <h1 class="start-title" data-i18n="game_title">MIX CRUSH</h1>
+            <p class="start-subtitle" data-i18n="game_subtitle">Mix, Match, Win!</p>
             
             <div class="start-buttons">
                 <button id="start-btn" class="start-btn start-btn-primary">
-                    <span>🎮</span> OYUNA BAŞLA
+                    <span>🎮</span> <span data-i18n="play_game">START GAME</span>
                 </button>
                 <button id="levels-btn" class="start-btn start-btn-secondary">
-                    <span>🏆</span> SEVİYELER
+                    <span>🏆</span> <span data-i18n="levels">LEVELS</span>
                 </button>
                 <button id="stats-btn" class="start-btn start-btn-secondary">
-                    <span>📊</span> İSTATİSTİKLER
+                    <span>📊</span> <span data-i18n="statistics">STATISTICS</span>
                 </button>
                 <button id="settings-btn" class="start-btn start-btn-secondary">
-                    <span>⚙️</span> AYARLAR
+                    <span>⚙️</span> <span data-i18n="settings">SETTINGS</span>
                 </button>
             </div>
         </div>
@@ -1263,27 +1390,27 @@
     <div id="shape-screen" class="screen">
         <div class="shape-container">
             <div class="start-logo">🎨</div>
-            <h1 class="start-title">Tema Seç</h1>
-            <p class="start-subtitle">Favori temanı seç ve oyuna başla</p>
+            <h1 class="start-title" data-i18n="select_theme">Select Theme</h1>
+            <p class="start-subtitle" data-i18n="select_theme_subtitle">Choose your favorite theme and start playing</p>
             
             <div class="shape-grid">
-                <button class="shape-btn" data-shape="candy">🍭</button>
-                <button class="shape-btn" data-shape="sports">⚽</button>
-                <button class="shape-btn" data-shape="planets">🪐</button>
-                <button class="shape-btn" data-shape="balloons">🎈</button>
-                <button class="shape-btn" data-shape="letters">🔤</button>
-                <button class="shape-btn" data-shape="numbers">🔢</button>
-                <button class="shape-btn" data-shape="fruits">🍎</button>
-                <button class="shape-btn" data-shape="animals">🐱</button>
-                <button class="shape-btn" data-shape="hearts">💖</button>
+                <button class="shape-btn" data-shape="candy" title="Candies">🍭</button>
+                <button class="shape-btn" data-shape="sports" title="Sports">⚽</button>
+                <button class="shape-btn" data-shape="planets" title="Planets">🪐</button>
+                <button class="shape-btn" data-shape="balloons" title="Balloons">🎈</button>
+                <button class="shape-btn" data-shape="letters" title="Letters">🔤</button>
+                <button class="shape-btn" data-shape="numbers" title="Numbers">🔢</button>
+                <button class="shape-btn" data-shape="fruits" title="Fruits">🍎</button>
+                <button class="shape-btn" data-shape="animals" title="Animals">🐱</button>
+                <button class="shape-btn" data-shape="hearts" title="Hearts">💖</button>
             </div>
             
             <div class="start-buttons">
                 <button id="shape-confirm" class="start-btn start-btn-primary">
-                    <span>✅</span> ONAYLA VE BAŞLA
+                    <span>✅</span> <span data-i18n="confirm_start">CONFIRM AND START</span>
                 </button>
                 <button id="back-from-shape" class="start-btn start-btn-secondary">
-                    <span>←</span> GERİ
+                    <span>←</span> <span data-i18n="back">BACK</span>
                 </button>
             </div>
         </div>
@@ -1294,8 +1421,10 @@
         <div class="levels-container">
             <div class="levels-header">
                 <div class="start-logo">🏆</div>
-                <h1 class="start-title">Seviyeler</h1>
-                <p class="start-subtitle" id="levels-info">Açık Seviyeler: <span id="open-levels">1</span>/100</p>
+                <h1 class="start-title" data-i18n="levels">Levels</h1>
+                <p class="start-subtitle" id="levels-info">
+                    <span data-i18n="open_levels">Open Levels:</span> <span id="open-levels">1</span>/100
+                </p>
             </div>
             
             <div class="levels-grid-container">
@@ -1306,7 +1435,7 @@
             
             <div class="start-buttons">
                 <button id="back-from-levels" class="start-btn start-btn-secondary">
-                    <span>←</span> ANA MENÜ
+                    <span>←</span> <span data-i18n="main_menu">MAIN MENU</span>
                 </button>
             </div>
         </div>
@@ -1315,27 +1444,27 @@
     <!-- OYUN EKRANI -->
     <div id="game-screen" class="screen">
         <div id="top-bar">
-            <button id="home-btn" class="top-btn" title="Ana Menü">🏠</button>
-            <div id="mode-indicator">Seviye 1</div>
-            <button id="game-settings-btn" class="top-btn" title="Ayarlar">⚙️</button>
+            <button id="home-btn" class="top-btn" title="Main Menu" data-i18n-title="main_menu">🏠</button>
+            <div id="mode-indicator" data-i18n="level">Level 1</div>
+            <button id="game-settings-btn" class="top-btn" title="Settings" data-i18n-title="settings">⚙️</button>
         </div>
         
         <div id="game-container">
             <div class="game-header">
                 <div class="header-card">
-                    <div class="header-label">SEVİYE</div>
+                    <div class="header-label" data-i18n="level">LEVEL</div>
                     <div class="header-value" id="level-display">1</div>
                 </div>
                 <div class="header-card">
-                    <div class="header-label">PUAN</div>
+                    <div class="header-label" data-i18n="score">SCORE</div>
                     <div class="header-value" id="score-display">0</div>
                 </div>
                 <div class="header-card">
-                    <div class="header-label">HAMLE</div>
+                    <div class="header-label" data-i18n="moves">MOVES</div>
                     <div class="header-value" id="moves-display">30</div>
                 </div>
                 <div class="header-card time-card">
-                    <div class="header-label">SÜRE</div>
+                    <div class="header-label" data-i18n="time">TIME</div>
                     <div class="header-value" id="time-display">0:00</div>
                 </div>
             </div>
@@ -1345,23 +1474,23 @@
             </div>
             
             <div class="boosters-container">
-                <button class="booster-btn" data-booster="hammer" title="Tek şeker kır">
+                <button class="booster-btn" data-booster="hammer" data-i18n-title="hammer_desc">
                     <div class="booster-icon">🔨</div>
                     <div class="booster-count" id="hammer-count">3</div>
                 </button>
-                <button class="booster-btn" data-booster="bomb" title="3x3 alanı temizle">
+                <button class="booster-btn" data-booster="bomb" data-i18n-title="bomb_desc">
                     <div class="booster-icon">💣</div>
                     <div class="booster-count" id="bomb-count">2</div>
                 </button>
-                <button class="booster-btn" data-booster="shuffle" title="Tahtayı karıştır">
+                <button class="booster-btn" data-booster="shuffle" data-i18n-title="shuffle_desc">
                     <div class="booster-icon">🔀</div>
                     <div class="booster-count" id="shuffle-count">1</div>
                 </button>
-                <button class="booster-btn" data-booster="fish" title="Rastgele şekerleri temizle">
+                <button class="booster-btn" data-booster="fish" data-i18n-title="fish_desc">
                     <div class="booster-icon">🐟</div>
                     <div class="booster-count" id="fish-count">2</div>
                 </button>
-                <button class="booster-btn" data-booster="coconut" title="Sütun temizle">
+                <button class="booster-btn" data-booster="coconut" data-i18n-title="coconut_desc">
                     <div class="booster-icon">🥥</div>
                     <div class="booster-count" id="coconut-count">1</div>
                 </button>
@@ -1376,42 +1505,42 @@
     <div id="settings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>⚙️ Mix Crush Ayarları</h2>
+                <h2 data-i18n="game_settings">Mix Crush Settings</h2>
                 <button class="close-btn" id="close-settings">×</button>
             </div>
             
-            <h3>🔊 Ses Ayarları</h3>
+            <h3 data-i18n="sound_settings">🔊 Sound Settings</h3>
             <div class="setting-item">
-                <label>Ses Efektleri</label>
+                <label data-i18n="sound_effects">Sound Effects</label>
                 <input type="range" id="sfx-volume" min="0" max="100" value="70">
                 <span id="sfx-value">70%</span>
             </div>
             
             <div class="setting-item">
-                <label>Müzik</label>
+                <label data-i18n="music">Music</label>
                 <input type="range" id="music-volume" min="0" max="100" value="50">
                 <span id="music-value">50%</span>
             </div>
             
-            <h3>🎨 Görünüm</h3>
+            <h3 data-i18n="appearance">🎨 Appearance</h3>
             <div class="setting-item">
-                <label>Görsel Efektler</label>
+                <label data-i18n="visual_effects">Visual Effects</label>
                 <input type="checkbox" id="effects-toggle" checked>
             </div>
             
             <div class="setting-item">
-                <label>Karanlık Mod</label>
+                <label data-i18n="dark_mode">Dark Mode</label>
                 <input type="checkbox" id="dark-mode-toggle">
             </div>
             
-            <h3>🔄 Veri Yönetimi</h3>
+            <h3 data-i18n="data_management">🔄 Data Management</h3>
             <div class="setting-item">
-                <label>Tüm Verileri Sıfırla</label>
-                <button id="reset-btn" class="start-btn start-btn-secondary" style="padding: 8px 16px; font-size: 14px;">Sıfırla</button>
+                <label data-i18n="reset_all_data">Reset All Data</label>
+                <button id="reset-btn" class="start-btn start-btn-secondary" style="padding: 8px 16px; font-size: 14px;" data-i18n="reset">Reset</button>
             </div>
             
             <button id="close-settings-btn" class="start-btn start-btn-primary mt-20" style="width: 100%;">
-                <span>✅</span> TAMAM
+                <span>✅</span> <span data-i18n="ok">OK</span>
             </button>
         </div>
     </div>
@@ -1420,58 +1549,58 @@
     <div id="stats-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📊 Mix Crush İstatistikleri</h2>
+                <h2 data-i18n="game_statistics">Mix Crush Statistics</h2>
                 <button class="close-btn" id="close-stats">×</button>
             </div>
             
-            <h3>📈 Genel İstatistikler</h3>
+            <h3 data-i18n="general_statistics">📈 General Statistics</h3>
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value" id="total-games">0</div>
-                    <div class="stat-label">Toplam Oyun</div>
+                    <div class="stat-label" data-i18n="total_games">Total Games</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="total-score">0</div>
-                    <div class="stat-label">Toplam Puan</div>
+                    <div class="stat-label" data-i18n="total_score">Total Score</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="total-time">0</div>
-                    <div class="stat-label">Toplam Süre</div>
+                    <div class="stat-label" data-i18n="total_time">Total Time</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="best-combo">0</div>
-                    <div class="stat-label">En İyi Combo</div>
+                    <div class="stat-label" data-i18n="best_combo">Best Combo</div>
                 </div>
             </div>
             
-            <h3>🏆 En İyi Skorlar</h3>
+            <h3 data-i18n="best_scores">🏆 Best Scores</h3>
             <div class="setting-item">
-                <label>En Yüksek Puan</label>
+                <label data-i18n="highest_score">Highest Score</label>
                 <span id="best-score">0</span>
             </div>
             <div class="setting-item">
-                <label>En Hızlı Seviye</label>
+                <label data-i18n="fastest_level">Fastest Level</label>
                 <span id="fastest-level">-</span>
             </div>
             <div class="setting-item">
-                <label>Tamamlanan Seviye</label>
+                <label data-i18n="completed_levels">Completed Levels</label>
                 <span id="completed-levels">0/100</span>
             </div>
             
-            <h3>⏱️ Seviye Süreleri</h3>
+            <h3 data-i18n="level_times">⏱️ Level Times</h3>
             <div id="level-times" style="max-height: 200px; overflow-y: auto;">
-                <div class="text-center" style="color:#999; padding:15px; font-size:14px;">
-                    Henüz seviye tamamlanmadı
+                <div class="text-center" style="color:#999; padding:15px; font-size:14px;" data-i18n="no_levels_completed">
+                    No levels completed yet
                 </div>
             </div>
             
-            <h3>✨ Özel İstatistikler</h3>
+            <h3 data-i18n="special_stats">✨ Special Statistics</h3>
             <div class="setting-item">
-                <label>Oluşturulan Özel Şeker</label>
+                <label data-i18n="specials_created">Specials Created</label>
                 <span id="total-specials">0</span>
             </div>
             <div class="setting-item">
-                <label>Yapılan Eşleştirme</label>
+                <label data-i18n="matches_made">Matches Made</label>
                 <span id="total-matches">0</span>
             </div>
         </div>
@@ -1480,43 +1609,43 @@
     <!-- OYUN BİTTİ MODALI -->
     <div id="game-over-modal" class="modal">
         <div class="modal-content game-over-content">
-            <h2 id="game-over-title">🎉 Seviye Tamamlandı!</h2>
+            <h2 id="game-over-title">🎉 <span data-i18n="level_completed">Level Completed!</span></h2>
             
             <div style="font-size: 22px; text-align: center; margin: 15px 0; font-weight: bold;">
-                Puan: <span id="final-score">0</span>
+                <span data-i18n="score">Score:</span> <span id="final-score">0</span>
             </div>
             
             <div class="result-stats">
                 <div class="result-stat">
-                    <div>⏱️ Süre</div>
+                    <div data-i18n="time">⏱️ Time</div>
                     <div class="result-stat-value" id="level-time">0:00</div>
                 </div>
                 <div class="result-stat">
-                    <div>🔥 Combo</div>
+                    <div data-i18n="combo">🔥 Combo</div>
                     <div class="result-stat-value" id="max-combo">0x</div>
                 </div>
                 <div class="result-stat">
-                    <div>💎 Özel</div>
+                    <div data-i18n="special">💎 Special</div>
                     <div class="result-stat-value" id="special-count">0</div>
                 </div>
                 <div class="result-stat">
-                    <div>🎯 Verim</div>
+                    <div data-i18n="efficiency">🎯 Efficiency</div>
                     <div class="result-stat-value" id="efficiency">0%</div>
                 </div>
             </div>
             
             <div class="start-buttons">
                 <button id="next-level-btn" class="start-btn start-btn-primary">
-                    <span>➡️</span> SONRAKİ SEVİYE
+                    <span>➡️</span> <span data-i18n="next_level">NEXT LEVEL</span>
                 </button>
                 <button id="restart-level-btn" class="start-btn start-btn-secondary">
-                    <span>🔄</span> TEKRAR OYNA
+                    <span>🔄</span> <span data-i18n="play_again">PLAY AGAIN</span>
                 </button>
                 <button id="back-to-levels-btn" class="start-btn start-btn-secondary">
-                    <span>🏆</span> SEVİYELER
+                    <span>🏆</span> <span data-i18n="levels">LEVELS</span>
                 </button>
                 <button id="back-to-menu-btn" class="start-btn start-btn-secondary">
-                    <span>🏠</span> ANA MENÜ
+                    <span>🏠</span> <span data-i18n="main_menu">MAIN MENU</span>
                 </button>
             </div>
         </div>
@@ -1525,11 +1654,11 @@
     <!-- ONAY MODALI -->
     <div id="confirm-modal" class="confirm-modal">
         <div class="confirm-content">
-            <h3 id="confirm-title">Onay</h3>
-            <p id="confirm-message">Devam etmek istiyor musunuz?</p>
+            <h3 id="confirm-title" data-i18n="confirmation">Confirmation</h3>
+            <p id="confirm-message" data-i18n="confirm_question">Do you want to continue?</p>
             <div class="confirm-buttons">
-                <button id="confirm-yes" class="confirm-btn confirm-btn-yes">Evet</button>
-                <button id="confirm-no" class="confirm-btn confirm-btn-no">Hayır</button>
+                <button id="confirm-yes" class="confirm-btn confirm-btn-yes" data-i18n="yes">Yes</button>
+                <button id="confirm-no" class="confirm-btn confirm-btn-no" data-i18n="no">No</button>
             </div>
         </div>
     </div>
@@ -1537,11 +1666,11 @@
     <!-- BOOSTER REKLAM MODALI -->
     <div id="ad-modal" class="ad-modal">
         <div class="ad-content">
-            <h3>🎁 Mix Crush Booster Kazan!</h3>
-            <p>Reklam izleyerek 1 adet ücretsiz booster kazanabilirsin.</p>
+            <h3 data-i18n="get_booster">🎁 Get Mix Crush Booster!</h3>
+            <p data-i18n="watch_ad_for_booster">Watch ad to get 1 free booster.</p>
             <div class="confirm-buttons">
-                <button id="watch-ad-btn" class="confirm-btn confirm-btn-yes">Reklam İzle</button>
-                <button id="cancel-ad-btn" class="confirm-btn confirm-btn-no">İptal</button>
+                <button id="watch-ad-btn" class="confirm-btn confirm-btn-yes" data-i18n="watch_ad">Watch Ad</button>
+                <button id="cancel-ad-btn" class="confirm-btn confirm-btn-no" data-i18n="cancel">Cancel</button>
             </div>
         </div>
     </div>
@@ -1550,6 +1679,1431 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // === ÇOK DİLLİ YAPI ===
+        class LanguageManager {
+            constructor() {
+                this.languages = {
+                    'en': { // English - İlk dil olarak English'i öne aldım
+                        code: 'en',
+                        name: 'English',
+                        flag: '🇬🇧',
+                        direction: 'ltr',
+                        translations: {
+                            // Ana menü
+                            'game_title': 'MIX CRUSH',
+                            'game_subtitle': 'Mix, Match, Win!',
+                            'play_game': 'START GAME',
+                            'levels': 'LEVELS',
+                            'statistics': 'STATISTICS',
+                            'settings': 'SETTINGS',
+                            'main_menu': 'MAIN MENU',
+                            'back': 'BACK',
+                            'ok': 'OK',
+                            'yes': 'Yes',
+                            'no': 'No',
+                            'cancel': 'Cancel',
+                            'confirm': 'Confirm',
+                            'close': 'Close',
+                            'advertisement': 'Advertisement',
+                            
+                            // Şekil seçim
+                            'select_theme': 'Select Theme',
+                            'select_theme_subtitle': 'Choose your favorite theme and start playing',
+                            'confirm_start': 'CONFIRM AND START',
+                            
+                            // Oyun ekranı
+                            'level': 'LEVEL',
+                            'score': 'SCORE',
+                            'moves': 'MOVES',
+                            'time': 'TIME',
+                            'level_x': 'Level {0}',
+                            
+                            // Booster'lar
+                            'hammer_desc': 'Break single candy',
+                            'bomb_desc': 'Clear 3x3 area',
+                            'shuffle_desc': 'Shuffle board',
+                            'fish_desc': 'Clear random candies',
+                            'coconut_desc': 'Clear column',
+                            
+                            // Ayarlar
+                            'game_settings': 'Mix Crush Settings',
+                            'sound_settings': '🔊 Sound Settings',
+                            'sound_effects': 'Sound Effects',
+                            'music': 'Music',
+                            'appearance': '🎨 Appearance',
+                            'visual_effects': 'Visual Effects',
+                            'dark_mode': 'Dark Mode',
+                            'data_management': '🔄 Data Management',
+                            'reset_all_data': 'Reset All Data',
+                            'reset': 'Reset',
+                            
+                            // İstatistikler
+                            'game_statistics': 'Mix Crush Statistics',
+                            'general_statistics': '📈 General Statistics',
+                            'total_games': 'Total Games',
+                            'total_score': 'Total Score',
+                            'total_time': 'Total Time',
+                            'best_combo': 'Best Combo',
+                            'best_scores': '🏆 Best Scores',
+                            'highest_score': 'Highest Score',
+                            'fastest_level': 'Fastest Level',
+                            'completed_levels': 'Completed Levels',
+                            'level_times': '⏱️ Level Times',
+                            'no_levels_completed': 'No levels completed yet',
+                            'special_stats': '✨ Special Statistics',
+                            'specials_created': 'Specials Created',
+                            'matches_made': 'Matches Made',
+                            
+                            // Oyun bitti
+                            'level_completed': 'Level Completed!',
+                            'game_over': 'Game Over!',
+                            'next_level': 'NEXT LEVEL',
+                            'play_again': 'PLAY AGAIN',
+                            'combo': 'Combo',
+                            'special': 'Special',
+                            'efficiency': 'Efficiency',
+                            
+                            // Onay ekranı
+                            'confirmation': 'Confirmation',
+                            'confirm_question': 'Do you want to continue?',
+                            
+                            // Reklam
+                            'get_booster': '🎁 Get Mix Crush Booster!',
+                            'watch_ad_for_booster': 'Watch ad to get 1 free booster.',
+                            'watch_ad': 'Watch Ad',
+                            
+                            // Seviyeler
+                            'open_levels': 'Open Levels',
+                            
+                            // Bildirimler
+                            'ad_cancelled': 'Ad viewing cancelled.',
+                            'ad_watched': 'Ad watched! Booster added.',
+                            'booster_added': '+1 {0} earned!',
+                            'exit_game': 'Exit Game',
+                            'exit_confirm': 'Are you sure you want to exit Mix Crush game? Unsaved progress may be lost.',
+                            'reset_data': 'Reset Data',
+                            'reset_confirm': 'All Mix Crush game data will be deleted. This action cannot be undone. Are you sure?',
+                            'level_start': 'Mix Crush Level {0} started!',
+                            'booster_active': 'Booster active! Click a candy.',
+                            'booster_cancelled': 'Booster cancelled.',
+                            
+                            // Booster açıklamaları
+                            'hammer_info': '🔨 Hammer: Use to break a single candy. Click a candy when active.',
+                            'bomb_info': '💣 Bomb: Clears candies in 3x3 area. Click a candy when active.',
+                            'shuffle_info': '🔀 Shuffle: Shuffles all candies. Takes effect immediately.',
+                            'fish_info': '🐟 Fish: Clears 3 random candies. Click a candy when active.',
+                            'coconut_info': '🥥 Coconut: Clears entire column. Click a candy when active.',
+                            
+                            // Oyun içi bildirimler
+                            'language_changed': 'Language changed!',
+                            'two_specials_combined': 'Two specials combined',
+                            'mega_explosion': 'Mega explosion',
+                            'all_same_color_striped': 'All same color striped',
+                            'cross_clean': 'Cross clean',
+                            'big_explosion': 'Big explosion',
+                            'fish_swarm': 'Fish swarm',
+                            'double_column_clean': 'Double column clean',
+                            'row_cleared': 'Row cleared',
+                            'column_cleared': 'Column cleared',
+                            'area_cleared': 'Area cleared',
+                            'all_candies_cleared': 'All {0} candies cleared',
+                            'fish_ate_candies': 'Fish ate candies',
+                            'coconut_cleared_column': 'Coconut cleared column',
+                            'awesome_5_matches': 'Awesome! 5+ matches!',
+                            'great_4_matches': 'Great! 4 matches!',
+                            'combo_x': 'Combo {0}',
+                            'color_bomb_created': 'Color bomb created!',
+                            'striped_candy_created': 'Striped candy created!',
+                            'wrapped_candy_created': 'Wrapped candy created!',
+                            'fish_created': 'Fish created!',
+                            'coconut_created': 'Coconut created!',
+                            'board_shuffled': 'Board shuffled',
+                            'watching_ad': 'Watching ad...',
+                            'ad_title': 'Mix Crush Ad',
+                            'ad_text': 'Thanks for watching! You earned a booster.',
+                            'ad_closing': 'This window will close automatically...',
+                            'out_of_stock': 'Out of stock'
+                        }
+                    },
+                    'tr': { // Türkçe
+                        code: 'tr',
+                        name: 'Türkçe',
+                        flag: '🇹🇷',
+                        direction: 'ltr',
+                        translations: {
+                            // Ana menü
+                            'game_title': 'MIX CRUSH',
+                            'game_subtitle': 'Karıştır, Eşleştir, Kazan!',
+                            'play_game': 'OYUNA BAŞLA',
+                            'levels': 'SEVİYELER',
+                            'statistics': 'İSTATİSTİKLER',
+                            'settings': 'AYARLAR',
+                            'main_menu': 'ANA MENÜ',
+                            'back': 'GERİ',
+                            'ok': 'TAMAM',
+                            'yes': 'Evet',
+                            'no': 'Hayır',
+                            'cancel': 'İptal',
+                            'confirm': 'Onayla',
+                            'close': 'Kapat',
+                            'advertisement': 'Reklam',
+                            
+                            // Şekil seçim
+                            'select_theme': 'Tema Seç',
+                            'select_theme_subtitle': 'Favori temanı seç ve oyuna başla',
+                            'confirm_start': 'ONAYLA VE BAŞLA',
+                            
+                            // Oyun ekranı
+                            'level': 'SEVİYE',
+                            'score': 'PUAN',
+                            'moves': 'HAMLE',
+                            'time': 'SÜRE',
+                            'level_x': 'Seviye {0}',
+                            
+                            // Booster'lar
+                            'hammer_desc': 'Tek şeker kır',
+                            'bomb_desc': '3x3 alanı temizle',
+                            'shuffle_desc': 'Tahtayı karıştır',
+                            'fish_desc': 'Rastgele şekerleri temizle',
+                            'coconut_desc': 'Sütun temizle',
+                            
+                            // Ayarlar
+                            'game_settings': 'Mix Crush Ayarları',
+                            'sound_settings': '🔊 Ses Ayarları',
+                            'sound_effects': 'Ses Efektleri',
+                            'music': 'Müzik',
+                            'appearance': '🎨 Görünüm',
+                            'visual_effects': 'Görsel Efektler',
+                            'dark_mode': 'Karanlık Mod',
+                            'data_management': '🔄 Veri Yönetimi',
+                            'reset_all_data': 'Tüm Verileri Sıfırla',
+                            'reset': 'Sıfırla',
+                            
+                            // İstatistikler
+                            'game_statistics': 'Mix Crush İstatistikleri',
+                            'general_statistics': '📈 Genel İstatistikler',
+                            'total_games': 'Toplam Oyun',
+                            'total_score': 'Toplam Puan',
+                            'total_time': 'Toplam Süre',
+                            'best_combo': 'En İyi Combo',
+                            'best_scores': '🏆 En İyi Skorlar',
+                            'highest_score': 'En Yüksek Puan',
+                            'fastest_level': 'En Hızlı Seviye',
+                            'completed_levels': 'Tamamlanan Seviye',
+                            'level_times': '⏱️ Seviye Süreleri',
+                            'no_levels_completed': 'Henüz seviye tamamlanmadı',
+                            'special_stats': '✨ Özel İstatistikler',
+                            'specials_created': 'Oluşturulan Özel Şeker',
+                            'matches_made': 'Yapılan Eşleştirme',
+                            
+                            // Oyun bitti
+                            'level_completed': 'Seviye Tamamlandı!',
+                            'game_over': 'Oyun Bitti!',
+                            'next_level': 'SONRAKİ SEVİYE',
+                            'play_again': 'TEKRAR OYNA',
+                            'combo': 'Combo',
+                            'special': 'Özel',
+                            'efficiency': 'Verim',
+                            
+                            // Onay ekranı
+                            'confirmation': 'Onay',
+                            'confirm_question': 'Devam etmek istiyor musunuz?',
+                            
+                            // Reklam
+                            'get_booster': '🎁 Mix Crush Booster Kazan!',
+                            'watch_ad_for_booster': 'Reklam izleyerek 1 adet ücretsiz booster kazanabilirsin.',
+                            'watch_ad': 'Reklam İzle',
+                            
+                            // Seviyeler
+                            'open_levels': 'Açık Seviyeler',
+                            
+                            // Bildirimler
+                            'ad_cancelled': 'Reklam izleme iptal edildi.',
+                            'ad_watched': 'Reklam izlendi! Booster eklendi.',
+                            'booster_added': '+1 {0} kazandın!',
+                            'exit_game': 'Oyundan Çık',
+                            'exit_confirm': 'Mix Crush oyunundan çıkmak istediğine emin misin? Kaydedilmemiş ilerlemen kaybolabilir.',
+                            'reset_data': 'Verileri Sıfırla',
+                            'reset_confirm': 'Tüm Mix Crush oyun verileri silinecek. Bu işlem geri alınamaz. Emin misiniz?',
+                            'level_start': 'Mix Crush Seviye {0} başladı!',
+                            'booster_active': 'Booster aktif! Bir şekere tıkla.',
+                            'booster_cancelled': 'Booster iptal edildi.',
+                            
+                            // Booster açıklamaları
+                            'hammer_info': '🔨 Çekiç: Tek bir şekeri kırmak için kullan. Aktifken bir şekere tıkla.',
+                            'bomb_info': '💣 Bomba: 3x3 alandaki şekerleri patlatır. Aktifken bir şekere tıkla.',
+                            'shuffle_info': '🔀 Karıştır: Tüm şekerleri yeniden karıştırır. Hemen etki eder.',
+                            'fish_info': '🐟 Balık: Rastgele 3 şekeri temizler. Aktifken bir şekere tıkla.',
+                            'coconut_info': '🥥 Hindistan Cevizi: Tüm sütunu temizler. Aktifken bir şekere tıkla.',
+                            
+                            // Oyun içi bildirimler
+                            'language_changed': 'Dil değiştirildi!',
+                            'two_specials_combined': 'İki özel şeker birleştirildi',
+                            'mega_explosion': 'Mega patlama',
+                            'all_same_color_striped': 'Tüm aynı renkler çizgili yapıldı',
+                            'cross_clean': 'Çapraz temizlik',
+                            'big_explosion': 'Büyük patlama',
+                            'fish_swarm': 'Balık sürüsü',
+                            'double_column_clean': 'Çift sütun temizliği',
+                            'row_cleared': 'Satır temizlendi',
+                            'column_cleared': 'Sütun temizlendi',
+                            'area_cleared': 'Alan temizlendi',
+                            'all_candies_cleared': 'Tüm {0} şekerleri temizlendi',
+                            'fish_ate_candies': 'Balık şekerleri yedi',
+                            'coconut_cleared_column': 'Hindistan cevizi sütunu temizledi',
+                            'awesome_5_matches': 'Harika! 5+ eşleşme!',
+                            'great_4_matches': 'Harika! 4 eşleşme!',
+                            'combo_x': 'Combo {0}',
+                            'color_bomb_created': 'Renk bombası oluşturuldu!',
+                            'striped_candy_created': 'Çizgili şeker oluşturuldu!',
+                            'wrapped_candy_created': 'Paketlenmiş şeker oluşturuldu!',
+                            'fish_created': 'Balık oluşturuldu!',
+                            'coconut_created': 'Hindistan cevizi oluşturuldu!',
+                            'board_shuffled': 'Tahta karıştırıldı',
+                            'watching_ad': 'Reklam izleniyor...',
+                            'ad_title': 'Mix Crush Reklamı',
+                            'ad_text': 'İzlediğiniz için teşekkürler! Booster kazandınız.',
+                            'ad_closing': 'Bu pencere otomatik kapanacak...',
+                            'out_of_stock': 'Stokta yok'
+                        }
+                    },
+                    'es': { // Español
+                        code: 'es',
+                        name: 'Español',
+                        flag: '🇪🇸',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': 'MIX CRUSH',
+                            'game_subtitle': '¡Mezcla, Combina, Gana!',
+                            'play_game': 'COMENZAR JUEGO',
+                            'levels': 'NIVELES',
+                            'statistics': 'ESTADÍSTICAS',
+                            'settings': 'AJUSTES',
+                            'main_menu': 'MENÚ PRINCIPAL',
+                            'back': 'ATRÁS',
+                            'ok': 'ACEPTAR',
+                            'yes': 'Sí',
+                            'no': 'No',
+                            'cancel': 'Cancelar',
+                            'confirm': 'Confirmar',
+                            'close': 'Cerrar',
+                            'advertisement': 'Anuncio',
+                            
+                            'select_theme': 'Seleccionar Tema',
+                            'select_theme_subtitle': 'Elige tu tema favorito y comienza a jugar',
+                            'confirm_start': 'CONFIRMAR Y COMENZAR',
+                            
+                            'level': 'NIVEL',
+                            'score': 'PUNTUACIÓN',
+                            'moves': 'MOVIMIENTOS',
+                            'time': 'TIEMPO',
+                            'level_x': 'Nivel {0}',
+                            
+                            'hammer_desc': 'Romper un caramelo',
+                            'bomb_desc': 'Limpiar área 3x3',
+                            'shuffle_desc': 'Barajar tablero',
+                            'fish_desc': 'Limpiar caramelos aleatorios',
+                            'coconut_desc': 'Limpiar columna',
+                            
+                            'game_settings': 'Ajustes de Mix Crush',
+                            'sound_settings': '🔊 Ajustes de Sonido',
+                            'sound_effects': 'Efectos de Sonido',
+                            'music': 'Música',
+                            'appearance': '🎨 Apariencia',
+                            'visual_effects': 'Efectos Visuales',
+                            'dark_mode': 'Modo Oscuro',
+                            'data_management': '🔄 Gestión de Datos',
+                            'reset_all_data': 'Restablecer Todos los Datos',
+                            'reset': 'Restablecer',
+                            
+                            'game_statistics': 'Estadísticas de Mix Crush',
+                            'general_statistics': '📈 Estadísticas Generales',
+                            'total_games': 'Total de Juegos',
+                            'total_score': 'Puntuación Total',
+                            'total_time': 'Tiempo Total',
+                            'best_combo': 'Mejor Combo',
+                            'best_scores': '🏆 Mejores Puntuaciones',
+                            'highest_score': 'Puntuación Más Alta',
+                            'fastest_level': 'Nivel Más Rápido',
+                            'completed_levels': 'Niveles Completados',
+                            'level_times': '⏱️ Tiempos por Nivel',
+                            'no_levels_completed': 'Aún no hay niveles completados',
+                            'special_stats': '✨ Estadísticas Especiales',
+                            'specials_created': 'Especiales Creados',
+                            'matches_made': 'Emparejamientos Realizados',
+                            
+                            'level_completed': '¡Nivel Completado!',
+                            'game_over': '¡Juego Terminado!',
+                            'next_level': 'SIGUIENTE NIVEL',
+                            'play_again': 'JUGAR DE NUEVO',
+                            'combo': 'Combo',
+                            'special': 'Especial',
+                            'efficiency': 'Eficiencia',
+                            
+                            'confirmation': 'Confirmación',
+                            'confirm_question': '¿Quieres continuar?',
+                            
+                            'get_booster': '🎁 ¡Consigue Booster de Mix Crush!',
+                            'watch_ad_for_booster': 'Mira un anuncio para obtener 1 booster gratis.',
+                            'watch_ad': 'Ver Anuncio',
+                            
+                            'open_levels': 'Niveles Abiertos',
+                            
+                            'ad_cancelled': 'Visualización de anuncio cancelada.',
+                            'ad_watched': '¡Anuncio visto! Booster añadido.',
+                            'booster_added': '¡+1 {0} obtenido!',
+                            'exit_game': 'Salir del Juego',
+                            'exit_confirm': '¿Estás seguro de que quieres salir de Mix Crush? El progreso no guardado puede perderse.',
+                            'reset_data': 'Restablecer Datos',
+                            'reset_confirm': 'Todos los datos del juego Mix Crush serán eliminados. Esta acción no se puede deshacer. ¿Estás seguro?',
+                            'level_start': '¡Mix Crush Nivel {0} comenzado!',
+                            'booster_active': '¡Booster activo! Haz clic en un caramelo.',
+                            'booster_cancelled': 'Booster cancelado.',
+                            
+                            'hammer_info': '🔨 Martillo: Úsalo para romper un caramelo. Haz clic en un caramelo cuando esté activo.',
+                            'bomb_info': '💣 Bomba: Limpia caramelos en área 3x3. Haz clic en un caramelo cuando esté activo.',
+                            'shuffle_info': '🔀 Barajar: Mezcla todos los caramelos. Efecto inmediato.',
+                            'fish_info': '🐟 Pez: Limpia 3 caramelos aleatorios. Haz clic en un caramelo cuando esté activo.',
+                            'coconut_info': '🥥 Coco: Limpia columna completa. Haz clic en un caramelo cuando esté activo.'
+                        }
+                    },
+                    'de': { // Deutsch
+                        code: 'de',
+                        name: 'Deutsch',
+                        flag: '🇩🇪',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': 'MIX CRUSH',
+                            'game_subtitle': 'Mischen, Matchen, Gewinnen!',
+                            'play_game': 'SPIEL STARTEN',
+                            'levels': 'LEVEL',
+                            'statistics': 'STATISTIKEN',
+                            'settings': 'EINSTELLUNGEN',
+                            'main_menu': 'HAUPTMENÜ',
+                            'back': 'ZURÜCK',
+                            'ok': 'OK',
+                            'yes': 'Ja',
+                            'no': 'Nein',
+                            'cancel': 'Abbrechen',
+                            'confirm': 'Bestätigen',
+                            'close': 'Schließen',
+                            'advertisement': 'Werbung',
+                            
+                            'select_theme': 'Theme auswählen',
+                            'select_theme_subtitle': 'Wähle dein Lieblingsthema und beginne zu spielen',
+                            'confirm_start': 'BESTÄTIGEN UND STARTEN',
+                            
+                            'level': 'LEVEL',
+                            'score': 'PUNKTZAHL',
+                            'moves': 'ZÜGE',
+                            'time': 'ZEIT',
+                            'level_x': 'Level {0}',
+                            
+                            'hammer_desc': 'Einzelne Süßigkeit zerbrechen',
+                            'bomb_desc': '3x3 Bereich löschen',
+                            'shuffle_desc': 'Brett mischen',
+                            'fish_desc': 'Zufällige Süßigkeiten löschen',
+                            'coconut_desc': 'Spalte löschen',
+                            
+                            'game_settings': 'Mix Crush Einstellungen',
+                            'sound_settings': '🔊 Toneinstellungen',
+                            'sound_effects': 'Soundeffekte',
+                            'music': 'Musik',
+                            'appearance': '🎨 Erscheinungsbild',
+                            'visual_effects': 'Visuelle Effekte',
+                            'dark_mode': 'Dunkler Modus',
+                            'data_management': '🔄 Datenverwaltung',
+                            'reset_all_data': 'Alle Daten zurücksetzen',
+                            'reset': 'Zurücksetzen',
+                            
+                            'game_statistics': 'Mix Crush Statistiken',
+                            'general_statistics': '📈 Allgemeine Statistiken',
+                            'total_games': 'Gesamtspiele',
+                            'total_score': 'Gesamtpunktzahl',
+                            'total_time': 'Gesamtzeit',
+                            'best_combo': 'Bester Combo',
+                            'best_scores': '🏆 Beste Punktzahlen',
+                            'highest_score': 'Höchste Punktzahl',
+                            'fastest_level': 'Schnellstes Level',
+                            'completed_levels': 'Abgeschlossene Level',
+                            'level_times': '⏱️ Levelzeiten',
+                            'no_levels_completed': 'Noch keine Level abgeschlossen',
+                            'special_stats': '✨ Spezielle Statistiken',
+                            'specials_created': 'Spezialbonbons erstellt',
+                            'matches_made': 'Gemachte Matches',
+                            
+                            'level_completed': 'Level Abgeschlossen!',
+                            'game_over': 'Spiel Beendet!',
+                            'next_level': 'NÄCHSTES LEVEL',
+                            'play_again': 'NOCHMAL SPIELEN',
+                            'combo': 'Combo',
+                            'special': 'Spezial',
+                            'efficiency': 'Effizienz',
+                            
+                            'confirmation': 'Bestätigung',
+                            'confirm_question': 'Möchten Sie fortfahren?',
+                            
+                            'get_booster': '🎁 Hol dir Mix Crush Booster!',
+                            'watch_ad_for_booster': 'Schau eine Werbung für 1 kostenlosen Booster.',
+                            'watch_ad': 'Werbung ansehen',
+                            
+                            'open_levels': 'Geöffnete Level',
+                            
+                            'ad_cancelled': 'Werbeanzeige abgebrochen.',
+                            'ad_watched': 'Werbung gesehen! Booster hinzugefügt.',
+                            'booster_added': '+1 {0} erhalten!',
+                            'exit_game': 'Spiel verlassen',
+                            'exit_confirm': 'Bist du sicher, dass du Mix Crush verlassen möchtest? Ungespeicherter Fortschritt kann verloren gehen.',
+                            'reset_data': 'Daten zurücksetzen',
+                            'reset_confirm': 'Alle Mix Crush-Spieldaten werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. Bist du sicher?',
+                            'level_start': 'Mix Crush Level {0} gestartet!',
+                            'booster_active': 'Booster aktiv! Klicke auf eine Süßigkeit.',
+                            'booster_cancelled': 'Booster abgebrochen.',
+                            
+                            'hammer_info': '🔨 Hammer: Zum Zerbrechen einer einzelnen Süßigkeit. Klicke auf eine Süßigkeit, wenn aktiv.',
+                            'bomb_info': '💣 Bomba: Räumt Süßigkeiten im 3x3-Bereich. Klicke auf eine Süßigkeit, wenn aktiv.',
+                            'shuffle_info': '🔀 Mischen: Mischt alle Süßigkeiten. Wirkt sofort.',
+                            'fish_info': '🐟 Fisch: Räumt 3 zufällige Süßigkeiten. Klicke auf eine Süßigkeit, wenn aktiv.',
+                            'coconut_info': '🥥 Kokosnuss: Räumt ganze Spalte. Klicke auf eine Süßigkeit, wenn aktiv.'
+                        }
+                    },
+                    'fr': { // Français
+                        code: 'fr',
+                        name: 'Français',
+                        flag: '🇫🇷',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': 'MIX CRUSH',
+                            'game_subtitle': 'Mélangez, Associez, Gagnez!',
+                            'play_game': 'COMMENCER LE JEU',
+                            'levels': 'NIVEAUX',
+                            'statistics': 'STATISTIQUES',
+                            'settings': 'PARAMÈTRES',
+                            'main_menu': 'MENU PRINCIPAL',
+                            'back': 'RETOUR',
+                            'ok': 'OK',
+                            'yes': 'Oui',
+                            'no': 'Non',
+                            'cancel': 'Annuler',
+                            'confirm': 'Confirmer',
+                            'close': 'Fermer',
+                            'advertisement': 'Publicité',
+                            
+                            'select_theme': 'Choisir un Thème',
+                            'select_theme_subtitle': 'Choisissez votre thème préféré et commencez à jouer',
+                            'confirm_start': 'CONFIRMER ET COMMENCER',
+                            
+                            'level': 'NIVEAU',
+                            'score': 'SCORE',
+                            'moves': 'COUPS',
+                            'time': 'TEMPS',
+                            'level_x': 'Niveau {0}',
+                            
+                            'hammer_desc': 'Casser un bonbon',
+                            'bomb_desc': 'Effacer zone 3x3',
+                            'shuffle_desc': 'Mélanger le plateau',
+                            'fish_desc': 'Effacer des bonbons aléatoires',
+                            'coconut_desc': 'Effacer une colonne',
+                            
+                            'game_settings': 'Paramètres de Mix Crush',
+                            'sound_settings': '🔊 Paramètres Sonores',
+                            'sound_effects': 'Effets Sonores',
+                            'music': 'Musique',
+                            'appearance': '🎨 Apparence',
+                            'visual_effects': 'Effets Visuels',
+                            'dark_mode': 'Mode Sombre',
+                            'data_management': '🔄 Gestion des Données',
+                            'reset_all_data': 'Réinitialiser Toutes les Données',
+                            'reset': 'Réinitialiser',
+                            
+                            'game_statistics': 'Statistiques de Mix Crush',
+                            'general_statistics': '📈 Statistiques Générales',
+                            'total_games': 'Total des Jeux',
+                            'total_score': 'Score Total',
+                            'total_time': 'Temps Total',
+                            'best_combo': 'Meilleur Combo',
+                            'best_scores': '🏆 Meilleurs Scores',
+                            'highest_score': 'Score le Plus Élevé',
+                            'fastest_level': 'Niveau le Plus Rapide',
+                            'completed_levels': 'Niveaux Terminés',
+                            'level_times': '⏱️ Temps par Niveau',
+                            'no_levels_completed': 'Aucun niveau terminé pour l\'instant',
+                            'special_stats': '✨ Statistiques Spéciales',
+                            'specials_created': 'Spéciaux Créés',
+                            'matches_made': 'Correspondances Réalisées',
+                            
+                            'level_completed': 'Niveau Terminé!',
+                            'game_over': 'Partie Terminée!',
+                            'next_level': 'NIVEAU SUIVANT',
+                            'play_again': 'REJOUER',
+                            'combo': 'Combo',
+                            'special': 'Spécial',
+                            'efficiency': 'Efficacité',
+                            
+                            'confirmation': 'Confirmation',
+                            'confirm_question': 'Voulez-vous continuer?',
+                            
+                            'get_booster': '🎁 Obtenez un Booster Mix Crush!',
+                            'watch_ad_for_booster': 'Regardez une pub pour obtenir 1 booster gratuit.',
+                            'watch_ad': 'Regarder la Pub',
+                            
+                            'open_levels': 'Niveaux Ouverts',
+                            
+                            'ad_cancelled': 'Visionnage de pub annulé.',
+                            'ad_watched': 'Pub regardée! Booster ajouté.',
+                            'booster_added': '+1 {0} obtenu!',
+                            'exit_game': 'Quitter le Jeu',
+                            'exit_confirm': 'Êtes-vous sûr de vouloir quitter Mix Crush? La progression non enregistrée peut être perdue.',
+                            'reset_data': 'Réinitialiser les Données',
+                            'reset_confirm': 'Toutes les données du jeu Mix Crush seront supprimées. Cette action est irréversible. Êtes-vous sûr?',
+                            'level_start': 'Mix Crush Niveau {0} commencé!',
+                            'booster_active': 'Booster actif! Cliquez sur un bonbon.',
+                            'booster_cancelled': 'Booster annulé.',
+                            
+                            'hammer_info': '🔨 Marteau: Utilisez pour casser un bonbon. Cliquez sur un bonbon quand actif.',
+                            'bomb_info': '💣 Bombe: Efface les bonbons dans une zone 3x3. Cliquez sur un bonbon quand actif.',
+                            'shuffle_info': '🔀 Mélanger: Mélange tous les bonbons. Effet immédiat.',
+                            'fish_info': '🐟 Poisson: Efface 3 bonbons aléatoires. Cliquez sur un bonbon quand actif.',
+                            'coconut_info': '🥥 Noix de Coco: Efface toute la colonne. Cliquez sur un bonbon quand actif.'
+                        }
+                    },
+                    'it': { // Italiano
+                        code: 'it',
+                        name: 'Italiano',
+                        flag: '🇮🇹',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': 'MIX CRUSH',
+                            'game_subtitle': 'Mescola, Abbina, Vinci!',
+                            'play_game': 'INIZIA GIOCO',
+                            'levels': 'LIVELLI',
+                            'statistics': 'STATISTICHE',
+                            'settings': 'IMPOSTAZIONI',
+                            'main_menu': 'MENU PRINCIPALE',
+                            'back': 'INDIETRO',
+                            'ok': 'OK',
+                            'yes': 'Sì',
+                            'no': 'No',
+                            'cancel': 'Annulla',
+                            'confirm': 'Conferma',
+                            'close': 'Chiudi',
+                            'advertisement': 'Pubblicità',
+                            
+                            'select_theme': 'Seleziona Tema',
+                            'select_theme_subtitle': 'Scegli il tuo tema preferito e inizia a giocare',
+                            'confirm_start': 'CONFERMA E INIZIA',
+                            
+                            'level': 'LIVELLO',
+                            'score': 'PUNTEGGIO',
+                            'moves': 'MOSSE',
+                            'time': 'TEMPO',
+                            'level_x': 'Livello {0}',
+                            
+                            'hammer_desc': 'Rompi singola caramella',
+                            'bomb_desc': 'Pulisci area 3x3',
+                            'shuffle_desc': 'Mescola tabellone',
+                            'fish_desc': 'Pulisci caramelle casuali',
+                            'coconut_desc': 'Pulisci colonna',
+                            
+                            'game_settings': 'Impostazioni Mix Crush',
+                            'sound_settings': '🔊 Impostazioni Audio',
+                            'sound_effects': 'Effetti Sonori',
+                            'music': 'Musica',
+                            'appearance': '🎨 Aspetto',
+                            'visual_effects': 'Effetti Visivi',
+                            'dark_mode': 'Modalità Scura',
+                            'data_management': '🔄 Gestione Dati',
+                            'reset_all_data': 'Resetta Tutti i Dati',
+                            'reset': 'Resetta',
+                            
+                            'game_statistics': 'Statistiche Mix Crush',
+                            'general_statistics': '📈 Statistiche Generali',
+                            'total_games': 'Totale Partite',
+                            'total_score': 'Punteggio Totale',
+                            'total_time': 'Tempo Totale',
+                            'best_combo': 'Miglior Combo',
+                            'best_scores': '🏆 Migliori Punteggi',
+                            'highest_score': 'Punteggio Più Alto',
+                            'fastest_level': 'Livello Più Veloce',
+                            'completed_levels': 'Livelli Completati',
+                            'level_times': '⏱️ Tempi per Livello',
+                            'no_levels_completed': 'Nessun livello completato ancora',
+                            'special_stats': '✨ Statistiche Speciali',
+                            'specials_created': 'Speciali Creati',
+                            'matches_made': 'Abbinamenti Effettuati',
+                            
+                            'level_completed': 'Livello Completato!',
+                            'game_over': 'Partita Terminada!',
+                            'next_level': 'LIVELLO SUCCESSIVO',
+                            'play_again': 'GIOCA DI NUOVO',
+                            'combo': 'Combo',
+                            'special': 'Speciale',
+                            'efficiency': 'Efficienza',
+                            
+                            'confirmation': 'Conferma',
+                            'confirm_question': 'Vuoi continuare?',
+                            
+                            'get_booster': '🎁 Ottieni Booster Mix Crush!',
+                            'watch_ad_for_booster': 'Guarda una pubblicità per ottenere 1 booster gratuito.',
+                            'watch_ad': 'Guarda Pubblicità',
+                            
+                            'open_levels': 'Livelli Aperti',
+                            
+                            'ad_cancelled': 'Visualizzazione pubblicità annullata.',
+                            'ad_watched': 'Pubblicità vista! Booster aggiunto.',
+                            'booster_added': '+1 {0} ottenuto!',
+                            'exit_game': 'Esci dal Gioco',
+                            'exit_confirm': 'Sei sicuro di voler uscire da Mix Crush? I progressi non salvati potrebbero essere persi.',
+                            'reset_data': 'Resetta Dati',
+                            'reset_confirm': 'Tutti i dati del gioco Mix Crush verranno eliminati. Questa azione non può essere annullata. Sei sicuro?',
+                            'level_start': 'Mix Crush Livello {0} iniziato!',
+                            'booster_active': 'Booster attivo! Clicca su una caramella.',
+                            'booster_cancelled': 'Booster annullato.',
+                            
+                            'hammer_info': '🔨 Martello: Usa per rompere una singola caramella. Clicca su una caramella quando attivo.',
+                            'bomb_info': '💣 Bomba: Pulisce caramelle nell\'area 3x3. Clicca su una caramella quando attivo.',
+                            'shuffle_info': '🔀 Mescola: Mescola tutte le caramelle. Effetto immediato.',
+                            'fish_info': '🐟 Pesce: Pulisce 3 caramelle casuali. Clicca su una caramella quando attivo.',
+                            'coconut_info': '🥥 Cocco: Pulisce l\'intera colonna. Clicca su una caramella quando attivo.'
+                        }
+                    },
+                    'pt': { // Português
+                        code: 'pt',
+                        name: 'Português',
+                        flag: '🇵🇹',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': 'MIX CRUSH',
+                            'game_subtitle': 'Misture, Combine, Ganhe!',
+                            'play_game': 'INICIAR JOGO',
+                            'levels': 'NÍVEIS',
+                            'statistics': 'ESTATÍSTICAS',
+                            'settings': 'CONFIGURAÇÕES',
+                            'main_menu': 'MENU PRINCIPAL',
+                            'back': 'VOLTAR',
+                            'ok': 'OK',
+                            'yes': 'Sim',
+                            'no': 'Não',
+                            'cancel': 'Cancelar',
+                            'confirm': 'Confirmar',
+                            'close': 'Fechar',
+                            'advertisement': 'Publicidade',
+                            
+                            'select_theme': 'Selecionar Tema',
+                            'select_theme_subtitle': 'Escolha seu tema favorito e comece a jogar',
+                            'confirm_start': 'CONFIRMAR E INICIAR',
+                            
+                            'level': 'NÍVEL',
+                            'score': 'PONTUAÇÃO',
+                            'moves': 'MOVIMENTOS',
+                            'time': 'TEMPO',
+                            'level_x': 'Nível {0}',
+                            
+                            'hammer_desc': 'Quebrar doce único',
+                            'bomb_desc': 'Limpar área 3x3',
+                            'shuffle_desc': 'Embaralhar tabuleiro',
+                            'fish_desc': 'Limpar doces aleatórios',
+                            'coconut_desc': 'Limpar coluna',
+                            
+                            'game_settings': 'Configurações do Mix Crush',
+                            'sound_settings': '🔊 Configurações de Som',
+                            'sound_effects': 'Efeitos Sonoros',
+                            'music': 'Música',
+                            'appearance': '🎨 Aparência',
+                            'visual_effects': 'Efeitos Visuais',
+                            'dark_mode': 'Modo Escuro',
+                            'data_management': '🔄 Gerenciamento de Dados',
+                            'reset_all_data': 'Redefinir Todos os Dados',
+                            'reset': 'Redefinir',
+                            
+                            'game_statistics': 'Estatísticas do Mix Crush',
+                            'general_statistics': '📈 Estatísticas Gerais',
+                            'total_games': 'Total de Jogos',
+                            'total_score': 'Pontuação Total',
+                            'total_time': 'Tempo Total',
+                            'best_combo': 'Melhor Combo',
+                            'best_scores': '🏆 Melhores Pontuações',
+                            'highest_score': 'Pontuação Mais Alta',
+                            'fastest_level': 'Nível Mais Rápido',
+                            'completed_levels': 'Níveis Concluídos',
+                            'level_times': '⏱️ Tempos por Nível',
+                            'no_levels_completed': 'Nenhum nível concluído ainda',
+                            'special_stats': '✨ Estatísticas Especiais',
+                            'specials_created': 'Especiais Criados',
+                            'matches_made': 'Combinações Feitas',
+                            
+                            'level_completed': 'Nível Concluído!',
+                            'game_over': 'Fim de Jogo!',
+                            'next_level': 'PRÓXIMO NÍVEL',
+                            'play_again': 'JOGAR NOVAMENTE',
+                            'combo': 'Combo',
+                            'special': 'Especial',
+                            'efficiency': 'Eficiência',
+                            
+                            'confirmation': 'Confirmação',
+                            'confirm_question': 'Deseja continuar?',
+                            
+                            'get_booster': '🎁 Ganhe Booster do Mix Crush!',
+                            'watch_ad_for_booster': 'Assista a um anúncio para ganhar 1 booster gratuito.',
+                            'watch_ad': 'Assistir Anúncio',
+                            
+                            'open_levels': 'Níveis Abertos',
+                            
+                            'ad_cancelled': 'Visualização de anúncio cancelada.',
+                            'ad_watched': 'Anúncio assistido! Booster adicionado.',
+                            'booster_added': '+1 {0} ganho!',
+                            'exit_game': 'Sair do Jogo',
+                            'exit_confirm': 'Tem certeza que deseja sair do Mix Crush? O progresso não salvo pode ser perdido.',
+                            'reset_data': 'Redefinir Dados',
+                            'reset_confirm': 'Todos os dados do jogo Mix Crush serão excluídos. Esta ação não pode ser desfeita. Tem certeza?',
+                            'level_start': 'Mix Crush Nível {0} iniciado!',
+                            'booster_active': 'Booster ativo! Clique em um doce.',
+                            'booster_cancelled': 'Booster cancelado.',
+                            
+                            'hammer_info': '🔨 Martelo: Use para quebrar um único doce. Clique em um doce quando ativo.',
+                            'bomb_info': '💣 Bomba: Limpa doces na área 3x3. Clique em um doce quando ativo.',
+                            'shuffle_info': '🔀 Embaralhar: Embaralha todos os doces. Efeito imediato.',
+                            'fish_info': '🐟 Peixe: Limpa 3 doces aleatórios. Clique em um doce quando ativo.',
+                            'coconut_info': '🥥 Coco: Limpa coluna inteira. Clique em um doce quando ativo.'
+                        }
+                    },
+                    'ru': { // Русский
+                        code: 'ru',
+                        name: 'Русский',
+                        flag: '🇷🇺',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': 'MIX CRUSH',
+                            'game_subtitle': 'Перемешивай, Соединяй, Побеждай!',
+                            'play_game': 'НАЧАТЬ ИГРУ',
+                            'levels': 'УРОВНИ',
+                            'statistics': 'СТАТИСТИКА',
+                            'settings': 'НАСТРОЙКИ',
+                            'main_menu': 'ГЛАВНОЕ МЕНЮ',
+                            'back': 'НАЗАД',
+                            'ok': 'ОК',
+                            'yes': 'Да',
+                            'no': 'Нет',
+                            'cancel': 'Отмена',
+                            'confirm': 'Подтвердить',
+                            'close': 'Закрыть',
+                            'advertisement': 'Реклама',
+                            
+                            'select_theme': 'Выбрать Тему',
+                            'select_theme_subtitle': 'Выберите любимую тему и начните играть',
+                            'confirm_start': 'ПОДТВЕРДИТЬ И НАЧАТЬ',
+                            
+                            'level': 'УРОВЕНЬ',
+                            'score': 'ОЧКИ',
+                            'moves': 'ХОДЫ',
+                            'time': 'ВРЕМЯ',
+                            'level_x': 'Уровень {0}',
+                            
+                            'hammer_desc': 'Разбить одну конфету',
+                            'bomb_desc': 'Очистить область 3x3',
+                            'shuffle_desc': 'Перемешать поле',
+                            'fish_desc': 'Очистить случайные конфеты',
+                            'coconut_desc': 'Очистить столбец',
+                            
+                            'game_settings': 'Настройки Mix Crush',
+                            'sound_settings': '🔊 Настройки Звука',
+                            'sound_effects': 'Звуковые Эффекты',
+                            'music': 'Музыка',
+                            'appearance': '🎨 Внешний Вид',
+                            'visual_effects': 'Визуальные Эффекты',
+                            'dark_mode': 'Тёмный Режим',
+                            'data_management': '🔄 Управление Данными',
+                            'reset_all_data': 'Сбросить Все Данные',
+                            'reset': 'Сбросить',
+                            
+                            'game_statistics': 'Статистика Mix Crush',
+                            'general_statistics': '📈 Общая Статистика',
+                            'total_games': 'Всего Игр',
+                            'total_score': 'Всего Очков',
+                            'total_time': 'Общее Время',
+                            'best_combo': 'Лучший Комбо',
+                            'best_scores': '🏆 Лучшие Результаты',
+                            'highest_score': 'Наивысший Результат',
+                            'fastest_level': 'Самый Быстрый Уровень',
+                            'completed_levels': 'Завершённые Уровни',
+                            'level_times': '⏱️ Время по Уровням',
+                            'no_levels_completed': 'Уровни ещё не завершены',
+                            'special_stats': '✨ Специальная Статистика',
+                            'specials_created': 'Создано Специальных',
+                            'matches_made': 'Сделано Совпадений',
+                            
+                            'level_completed': 'Уровень Завершён!',
+                            'game_over': 'Игра Окончена!',
+                            'next_level': 'СЛЕДУЮЩИЙ УРОВЕНЬ',
+                            'play_again': 'ИГРАТЬ СНОВА',
+                            'combo': 'Комбо',
+                            'special': 'Специальный',
+                            'efficiency': 'Эффективность',
+                            
+                            'confirmation': 'Подтверждение',
+                            'confirm_question': 'Вы хотите продолжить?',
+                            
+                            'get_booster': '🎁 Получите Бустер Mix Crush!',
+                            'watch_ad_for_booster': 'Посмотрите рекламу, чтобы получить 1 бесплатный бустер.',
+                            'watch_ad': 'Смотреть Рекламу',
+                            
+                            'open_levels': 'Открытые Уровни',
+                            
+                            'ad_cancelled': 'Просмотр рекламы отменён.',
+                            'ad_watched': 'Реклама просмотрена! Бустер добавлен.',
+                            'booster_added': '+1 {0} получено!',
+                            'exit_game': 'Выйти из Игры',
+                            'exit_confirm': 'Вы уверены, что хотите выйти из Mix Crush? Несохранённый прогресс может быть потерян.',
+                            'reset_data': 'Сбросить Данные',
+                            'reset_confirm': 'Все данные игры Mix Crush будут удалены. Это действие нельзя отменить. Вы уверены?',
+                            'level_start': 'Mix Crush Уровень {0} начался!',
+                            'booster_active': 'Бустер активен! Нажмите на конфету.',
+                            'booster_cancelled': 'Бустер отменён.',
+                            
+                            'hammer_info': '🔨 Молоток: Используйте, чтобы разбить одну конфету. Нажмите на конфету, когда активен.',
+                            'bomb_info': '💣 Бомба: Очищает конфеты в области 3x3. Нажмите на конфету, когда активна.',
+                            'shuffle_info': '🔀 Перемешать: Перемешивает все конфеты. Немедленный эффект.',
+                            'fish_info': '🐟 Рыба: Очищает 3 случайные конфеты. Нажмите на конфету, когда активна.',
+                            'coconut_info': '🥥 Кокос: Очищает весь столбец. Нажмите на конфету, когда активен.'
+                        }
+                    },
+                    'ar': { // العربية
+                        code: 'ar',
+                        name: 'العربية',
+                        flag: '🇸🇦',
+                        direction: 'rtl',
+                        translations: {
+                            'game_title': 'ميكس كراش',
+                            'game_subtitle': 'امزج، طابق، اربح!',
+                            'play_game': 'ابدأ اللعبة',
+                            'levels': 'المستويات',
+                            'statistics': 'الإحصائيات',
+                            'settings': 'الإعدادات',
+                            'main_menu': 'القائمة الرئيسية',
+                            'back': 'رجوع',
+                            'ok': 'موافق',
+                            'yes': 'نعم',
+                            'no': 'لا',
+                            'cancel': 'إلغاء',
+                            'confirm': 'تأكيد',
+                            'close': 'إغلاق',
+                            'advertisement': 'إعلان',
+                            
+                            'select_theme': 'اختر السمة',
+                            'select_theme_subtitle': 'اختر سمتك المفضلة وابدأ اللعب',
+                            'confirm_start': 'تأكيد والبدء',
+                            
+                            'level': 'المستوى',
+                            'score': 'النقاط',
+                            'moves': 'الحركات',
+                            'time': 'الوقت',
+                            'level_x': 'المستوى {0}',
+                            
+                            'hammer_desc': 'كسر قطعة حلوى واحدة',
+                            'bomb_desc': 'مسح منطقة 3x3',
+                            'shuffle_desc': 'خلط اللوحة',
+                            'fish_desc': 'مسح قطع حلوى عشوائية',
+                            'coconut_desc': 'مسح عمود',
+                            
+                            'game_settings': 'إعدادات ميكس كراش',
+                            'sound_settings': '🔊 إعدادات الصوت',
+                            'sound_effects': 'المؤثرات الصوتية',
+                            'music': 'الموسيقى',
+                            'appearance': '🎨 المظهر',
+                            'visual_effects': 'المؤثرات المرئية',
+                            'dark_mode': 'الوضع الداكن',
+                            'data_management': '🔄 إدارة البيانات',
+                            'reset_all_data': 'إعادة ضبط جميع البيانات',
+                            'reset': 'إعادة ضبط',
+                            
+                            'game_statistics': 'إحصائيات ميكس كراش',
+                            'general_statistics': '📈 إحصائيات عامة',
+                            'total_games': 'إجمالي الألعاب',
+                            'total_score': 'إجمالي النقاط',
+                            'total_time': 'إجمالي الوقت',
+                            'best_combo': 'أفضل كومبو',
+                            'best_scores': '🏆 أفضل النتائج',
+                            'highest_score': 'أعلى نتيجة',
+                            'fastest_level': 'أسرع مستوى',
+                            'completed_levels': 'المستويات المكتملة',
+                            'level_times': '⏱️ أوقات المستويات',
+                            'no_levels_completed': 'لم يتم إكمال أي مستويات بعد',
+                            'special_stats': '✨ إحصائيات خاصة',
+                            'specials_created': 'القطع الخاصة المنشأة',
+                            'matches_made': 'المطابقات المصنوعة',
+                            
+                            'level_completed': 'اكتمل المستوى!',
+                            'game_over': 'انتهت اللعبة!',
+                            'next_level': 'المستوى التالي',
+                            'play_again': 'العب مرة أخرى',
+                            'combo': 'كومبو',
+                            'special': 'خاص',
+                            'efficiency': 'الكفاءة',
+                            
+                            'confirmation': 'تأكيد',
+                            'confirm_question': 'هل تريد المتابعة؟',
+                            
+                            'get_booster': '🎁 احصل على معزز ميكس كراش!',
+                            'watch_ad_for_booster': 'شاهد إعلانًا للحصول على معزز مجاني واحد.',
+                            'watch_ad': 'شاهد الإعلان',
+                            
+                            'open_levels': 'المستويات المفتوحة',
+                            
+                            'ad_cancelled': 'تم إلغاء مشاهدة الإعلان.',
+                            'ad_watched': 'تمت مشاهدة الإعلان! تمت إضافة المعزز.',
+                            'booster_added': '+1 {0} تم الحصول عليها!',
+                            'exit_game': 'خروج من اللعبة',
+                            'exit_confirm': 'هل أنت متأكد أنك تريد الخروج من ميكس كراش؟ قد يتم فقد التقدم غير المحفوظ.',
+                            'reset_data': 'إعادة ضبط البيانات',
+                            'reset_confirm': 'سيتم حذف جميع بيانات لعبة ميكس كراش. لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد؟',
+                            'level_start': 'بدأ مستوى ميكس كراش {0}!',
+                            'booster_active': 'المعزز نشط! انقر على قطعة حلوى.',
+                            'booster_cancelled': 'تم إلغاء المعزز.',
+                            
+                            'hammer_info': '🔨 المطرقة: استخدم لكسر قطعة حلوى واحدة. انقر على قطعة حلوى عندما تكون نشطة.',
+                            'bomb_info': '💣 القنبلة: تمسح قطع الحلوى في منطقة 3x3. انقر على قطعة حلوى عندما تكون نشطة.',
+                            'shuffle_info': '🔀 خلط: يخلط جميع قطع الحلوى. تأثير فوري.',
+                            'fish_info': '🐟 سمكة: تمسح 3 قطع حلوى عشوائية. انقر على قطعة حلوى عندما تكون نشطة.',
+                            'coconut_info': '🥥 جوز الهند: يمسح العمود بأكمله. انقر على قطعة حلوى عندما يكون نشطًا.'
+                        }
+                    },
+                    'zh': { // 中文
+                        code: 'zh',
+                        name: '中文',
+                        flag: '🇨🇳',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': '混合消除',
+                            'game_subtitle': '混合，匹配，获胜！',
+                            'play_game': '开始游戏',
+                            'levels': '关卡',
+                            'statistics': '统计',
+                            'settings': '设置',
+                            'main_menu': '主菜单',
+                            'back': '返回',
+                            'ok': '确定',
+                            'yes': '是',
+                            'no': '否',
+                            'cancel': '取消',
+                            'confirm': '确认',
+                            'close': '关闭',
+                            'advertisement': '广告',
+                            
+                            'select_theme': '选择主题',
+                            'select_theme_subtitle': '选择你喜欢的主题并开始游戏',
+                            'confirm_start': '确认并开始',
+                            
+                            'level': '关卡',
+                            'score': '分数',
+                            'moves': '步数',
+                            'time': '时间',
+                            'level_x': '第 {0} 关',
+                            
+                            'hammer_desc': '敲碎单个糖果',
+                            'bomb_desc': '清除3x3区域',
+                            'shuffle_desc': '重新排列棋盘',
+                            'fish_desc': '清除随机糖果',
+                            'coconut_desc': '清除整列',
+                            
+                            'game_settings': '混合消除设置',
+                            'sound_settings': '🔊 声音设置',
+                            'sound_effects': '音效',
+                            'music': '音乐',
+                            'appearance': '🎨 外观',
+                            'visual_effects': '视觉效果',
+                            'dark_mode': '深色模式',
+                            'data_management': '🔄 数据管理',
+                            'reset_all_data': '重置所有数据',
+                            'reset': '重置',
+                            
+                            'game_statistics': '混合消除统计',
+                            'general_statistics': '📈 一般统计',
+                            'total_games': '总游戏次数',
+                            'total_score': '总分数',
+                            'total_time': '总时间',
+                            'best_combo': '最佳连击',
+                            'best_scores': '🏆 最佳分数',
+                            'highest_score': '最高分数',
+                            'fastest_level': '最快关卡',
+                            'completed_levels': '已完成关卡',
+                            'level_times': '⏱️ 关卡时间',
+                            'no_levels_completed': '尚未完成任何关卡',
+                            'special_stats': '✨ 特殊统计',
+                            'specials_created': '创建的特殊糖果',
+                            'matches_made': '完成的匹配',
+                            
+                            'level_completed': '关卡完成！',
+                            'game_over': '游戏结束！',
+                            'next_level': '下一关',
+                            'play_again': '再玩一次',
+                            'combo': '连击',
+                            'special': '特殊',
+                            'efficiency': '效率',
+                            
+                            'confirmation': '确认',
+                            'confirm_question': '您想继续吗？',
+                            
+                            'get_booster': '🎁 获得混合消除助推器！',
+                            'watch_ad_for_booster': '观看广告以获得1个免费助推器。',
+                            'watch_ad': '观看广告',
+                            
+                            'open_levels': '已开放关卡',
+                            
+                            'ad_cancelled': '广告观看已取消。',
+                            'ad_watched': '广告已观看！助推器已添加。',
+                            'booster_added': '获得 +1 {0}！',
+                            'exit_game': '退出游戏',
+                            'exit_confirm': '您确定要退出混合消除游戏吗？未保存的进度可能会丢失。',
+                            'reset_data': '重置数据',
+                            'reset_confirm': '所有混合消除游戏数据将被删除。此操作无法撤消。您确定吗？',
+                            'level_start': '混合消除第 {0} 关开始！',
+                            'booster_active': '助推器激活！点击一个糖果。',
+                            'booster_cancelled': '助推器已取消。',
+                            
+                            'hammer_info': '🔨 锤子：用于敲碎单个糖果。激活时点击一个糖果。',
+                            'bomb_info': '💣 炸弹：清除3x3区域的糖果。激活时点击一个糖果。',
+                            'shuffle_info': '🔀 重新排列：重新排列所有糖果。立即生效。',
+                            'fish_info': '🐟 鱼：清除3个随机糖果。激活时点击一个糖果。',
+                            'coconut_info': '🥥 椰子：清除整列糖果。激活时点击一个糖果。'
+                        }
+                    },
+                    'ja': { // 日本語
+                        code: 'ja',
+                        name: '日本語',
+                        flag: '🇯🇵',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': 'ミックスクラッシュ',
+                            'game_subtitle': '混ぜて、合わせて、勝つ！',
+                            'play_game': 'ゲーム開始',
+                            'levels': 'レベル',
+                            'statistics': '統計',
+                            'settings': '設定',
+                            'main_menu': 'メインメニュー',
+                            'back': '戻る',
+                            'ok': 'OK',
+                            'yes': 'はい',
+                            'no': 'いいえ',
+                            'cancel': 'キャンセル',
+                            'confirm': '確認',
+                            'close': '閉じる',
+                            'advertisement': '広告',
+                            
+                            'select_theme': 'テーマ選択',
+                            'select_theme_subtitle': 'お気に入りのテーマを選んでゲーム開始',
+                            'confirm_start': '確認して開始',
+                            
+                            'level': 'レベル',
+                            'score': 'スコア',
+                            'moves': '手数',
+                            'time': '時間',
+                            'level_x': 'レベル {0}',
+                            
+                            'hammer_desc': '単一キャンディを壊す',
+                            'bomb_desc': '3x3エリアをクリア',
+                            'shuffle_desc': 'ボードをシャッフル',
+                            'fish_desc': 'ランダムなキャンディをクリア',
+                            'coconut_desc': '列をクリア',
+                            
+                            'game_settings': 'ミックスクラッシュ設定',
+                            'sound_settings': '🔊 サウンド設定',
+                            'sound_effects': 'サウンドエフェクト',
+                            'music': '音楽',
+                            'appearance': '🎨 外観',
+                            'visual_effects': 'ビジュアルエフェクト',
+                            'dark_mode': 'ダークモード',
+                            'data_management': '🔄 データ管理',
+                            'reset_all_data': 'すべてのデータをリセット',
+                            'reset': 'リセット',
+                            
+                            'game_statistics': 'ミックスクラッシュ統計',
+                            'general_statistics': '📈 一般統計',
+                            'total_games': '総ゲーム数',
+                            'total_score': '総スコア',
+                            'total_time': '総時間',
+                            'best_combo': 'ベストコンボ',
+                            'best_scores': '🏆 ベストスコア',
+                            'highest_score': '最高スコア',
+                            'fastest_level': '最速レベル',
+                            'completed_levels': '完了レベル',
+                            'level_times': '⏱️ レベル時間',
+                            'no_levels_completed': 'まだレベルを完了していません',
+                            'special_stats': '✨ 特別統計',
+                            'specials_created': '作成された特別キャンディ',
+                            'matches_made': '作られたマッチ',
+                            
+                            'level_completed': 'レベル完了！',
+                            'game_over': 'ゲームオーバー！',
+                            'next_level': '次のレベル',
+                            'play_again': 'もう一度遊ぶ',
+                            'combo': 'コンボ',
+                            'special': '特別',
+                            'efficiency': '効率',
+                            
+                            'confirmation': '確認',
+                            'confirm_question': '続行しますか？',
+                            
+                            'get_booster': '🎁 ミックスクラッシュブースターを獲得！',
+                            'watch_ad_for_booster': '広告を見て無料ブースター1個を獲得。',
+                            'watch_ad': '広告を見る',
+                            
+                            'open_levels': '開放レベル',
+                            
+                            'ad_cancelled': '広告視聴がキャンセルされました。',
+                            'ad_watched': '広告を見ました！ブースターが追加されました。',
+                            'booster_added': '+1 {0} を獲得しました！',
+                            'exit_game': 'ゲームを終了',
+                            'exit_confirm': 'ミックスクラッシュを終了しますか？保存されていない進行状況は失われる可能性があります。',
+                            'reset_data': 'データをリセット',
+                            'reset_confirm': 'すべてのミックスクラッシュゲームデータが削除されます。この操作は元に戻せません。よろしいですか？',
+                            'level_start': 'ミックスクラッシュレベル {0} 開始！',
+                            'booster_active': 'ブースターがアクティブです！キャンディをクリックしてください。',
+                            'booster_cancelled': 'ブースターがキャンセルされました。',
+                            
+                            'hammer_info': '🔨 ハンマー：単一のキャンディを壊すために使用します。アクティブ時にキャンディをクリックしてください。',
+                            'bomb_info': '💣 ボム：3x3エリアのキャンディをクリアします。アクティブ時にキャンディをクリックしてください。',
+                            'shuffle_info': '🔀 シャッフル：すべてのキャンディをシャッフルします。即時効果。',
+                            'fish_info': '🐟 魚：ランダムなキャンディ3個をクリアします。アクティブ時にキャンディをクリックしてください。',
+                            'coconut_info': '🥥 ココナッツ：列全体をクリアします。アクティブ時にキャンディをクリックしてください。'
+                        }
+                    },
+                    'ko': { // 한국어
+                        code: 'ko',
+                        name: '한국어',
+                        flag: '🇰🇷',
+                        direction: 'ltr',
+                        translations: {
+                            'game_title': '믹스 크러시',
+                            'game_subtitle': '섞고, 맞추고, 승리하세요!',
+                            'play_game': '게임 시작',
+                            'levels': '레벨',
+                            'statistics': '통계',
+                            'settings': '설정',
+                            'main_menu': '메인 메뉴',
+                            'back': '뒤로',
+                            'ok': '확인',
+                            'yes': '예',
+                            'no': '아니오',
+                            'cancel': '취소',
+                            'confirm': '확인',
+                            'close': '닫기',
+                            'advertisement': '광고',
+                            
+                            'select_theme': '테마 선택',
+                            'select_theme_subtitle': '좋아하는 테마를 선택하고 게임 시작',
+                            'confirm_start': '확인하고 시작',
+                            
+                            'level': '레벨',
+                            'score': '점수',
+                            'moves': '이동',
+                            'time': '시간',
+                            'level_x': '레벨 {0}',
+                            
+                            'hammer_desc': '단일 캔디 깨기',
+                            'bomb_desc': '3x3 영역 제거',
+                            'shuffle_desc': '보드 섞기',
+                            'fish_desc': '랜덤 캔디 제거',
+                            'coconut_desc': '열 제거',
+                            
+                            'game_settings': '믹스 크러시 설정',
+                            'sound_settings': '🔊 사운드 설정',
+                            'sound_effects': '사운드 효과',
+                            'music': '음악',
+                            'appearance': '🎨 외관',
+                            'visual_effects': '시각 효과',
+                            'dark_mode': '다크 모드',
+                            'data_management': '🔄 데이터 관리',
+                            'reset_all_data': '모든 데이터 초기화',
+                            'reset': '초기화',
+                            
+                            'game_statistics': '믹스 크러시 통계',
+                            'general_statistics': '📈 일반 통계',
+                            'total_games': '총 게임 수',
+                            'total_score': '총 점수',
+                            'total_time': '총 시간',
+                            'best_combo': '최고 콤보',
+                            'best_scores': '🏆 최고 점수',
+                            'highest_score': '최고 점수',
+                            'fastest_level': '가장 빠른 레벨',
+                            'completed_levels': '완료된 레벨',
+                            'level_times': '⏱️ 레벨 시간',
+                            'no_levels_completed': '아직 완료된 레벨이 없습니다',
+                            'special_stats': '✨ 특별 통계',
+                            'specials_created': '생성된 특별 캔디',
+                            'matches_made': '만들어진 매치',
+                            
+                            'level_completed': '레벨 완료!',
+                            'game_over': '게임 오버!',
+                            'next_level': '다음 레벨',
+                            'play_again': '다시 플레이',
+                            'combo': '콤보',
+                            'special': '특별',
+                            'efficiency': '효율',
+                            
+                            'confirmation': '확인',
+                            'confirm_question': '계속하시겠습니까?',
+                            
+                            'get_booster': '🎁 믹스 크러시 부스터 획득!',
+                            'watch_ad_for_booster': '광고를 보고 무료 부스터 1개를 획득하세요.',
+                            'watch_ad': '광고 보기',
+                            
+                            'open_levels': '오픈 레벨',
+                            
+                            'ad_cancelled': '광고 시청이 취소되었습니다.',
+                            'ad_watched': '광고를 시청했습니다! 부스터가 추가되었습니다.',
+                            'booster_added': '+1 {0} 획득했습니다!',
+                            'exit_game': '게임 종료',
+                            'exit_confirm': '믹스 크러시를 종료하시겠습니까? 저장되지 않은 진행 상황이 손실될 수 있습니다.',
+                            'reset_data': '데이터 초기화',
+                            'reset_confirm': '모든 믹스 크러시 게임 데이터가 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 확실합니까?',
+                            'level_start': '믹스 크러시 레벨 {0} 시작!',
+                            'booster_active': '부스터 활성화! 캔디를 클릭하세요.',
+                            'booster_cancelled': '부스터가 취소되었습니다.',
+                            
+                            'hammer_info': '🔨 해머: 단일 캔디를 깨기 위해 사용합니다. 활성화 시 캔디를 클릭하세요.',
+                            'bomb_info': '💣 폭탄: 3x3 영역의 캔디를 제거합니다. 활성화 시 캔디를 클릭하세요.',
+                            'shuffle_info': '🔀 섞기: 모든 캔디를 섞습니다. 즉시 적용됩니다.',
+                            'fish_info': '🐟 물고기: 랜덤 캔디 3개를 제거합니다. 활성화 시 캔디를 클릭하세요.',
+                            'coconut_info': '🥥 코코넛: 전체 열을 제거합니다. 활성화 시 캔디를 클릭하세요.'
+                        }
+                    }
+                };
+                
+                this.currentLang = 'en'; // Varsayılan dili English olarak ayarla
+                this.init();
+            }
+            
+            init() {
+                // Dil tercihini yükle
+                const savedLang = localStorage.getItem('mix_crush_lang');
+                if (savedLang && this.languages[savedLang]) {
+                    this.currentLang = savedLang;
+                } else {
+                    // Varsayılan dil English
+                    this.currentLang = 'en';
+                    localStorage.setItem('mix_crush_lang', 'en');
+                }
+                
+                this.applyLanguage();
+                this.initLanguageSelector();
+            }
+            
+            initLanguageSelector() {
+                const dropdown = document.getElementById('lang-dropdown');
+                dropdown.innerHTML = '';
+                
+                Object.values(this.languages).forEach(lang => {
+                    const option = document.createElement('div');
+                    option.className = 'lang-option';
+                    if (lang.code === this.currentLang) {
+                        option.classList.add('active');
+                    }
+                    
+                    option.innerHTML = `
+                        <span class="lang-flag">${lang.flag}</span>
+                        <span class="lang-name">${lang.name}</span>
+                    `;
+                    
+                    option.onclick = () => {
+                        this.setLanguage(lang.code);
+                        dropdown.classList.remove('show');
+                    };
+                    
+                    dropdown.appendChild(option);
+                });
+                
+                // Dil seçici butonu
+                document.getElementById('lang-btn').onclick = (e) => {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                };
+                
+                // Dışarı tıklandığında dropdown'ı kapat
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.lang-selector')) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            }
+            
+            setLanguage(langCode) {
+                if (this.languages[langCode]) {
+                    this.currentLang = langCode;
+                    localStorage.setItem('mix_crush_lang', langCode);
+                    this.applyLanguage();
+                    
+                    // Yönlendirmeyi güncelle
+                    const lang = this.languages[langCode];
+                    document.body.style.direction = lang.direction;
+                    document.documentElement.lang = langCode;
+                    
+                    // Oyun dil değişikliğini bildir
+                    if (window.game) {
+                        window.game.showToast(this.translate('language_changed'));
+                    }
+                }
+            }
+            
+            applyLanguage() {
+                const lang = this.languages[this.currentLang];
+                
+                // Dil butonunu güncelle
+                document.getElementById('current-lang-flag').textContent = lang.flag;
+                document.getElementById('current-lang-name').textContent = lang.name;
+                
+                // Tüm metinleri çevir
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    const translation = this.translate(key, this.currentLang);
+                    if (translation) {
+                        if (el.tagName === 'INPUT' && el.type === 'range') {
+                            // Input değerleri için özel işlem
+                            return;
+                        }
+                        el.textContent = translation;
+                    }
+                });
+                
+                // Title etiketlerini çevir
+                document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-title');
+                    const translation = this.translate(key, this.currentLang);
+                    if (translation) {
+                        el.title = translation;
+                    }
+                });
+                
+                // Placeholder'ları çevir
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-placeholder');
+                    const translation = this.translate(key, this.currentLang);
+                    if (translation) {
+                        el.placeholder = translation;
+                    }
+                });
+            }
+            
+            translate(key, langCode = null) {
+                const lang = langCode || this.currentLang;
+                const translation = this.languages[lang]?.translations[key];
+                
+                if (!translation && lang !== 'en') {
+                    // İngilizce'ye geri dön
+                    return this.languages['en']?.translations[key] || key;
+                }
+                
+                return translation || key;
+            }
+            
+            format(key, ...args) {
+                let translation = this.translate(key);
+                args.forEach((arg, index) => {
+                    translation = translation.replace(`{${index}}`, arg);
+                });
+                return translation;
+            }
+        }
+
         // === OYUN SINIFI ===
         class MixCrushGame {
             constructor() {
@@ -1583,10 +3137,11 @@
                 this.lastNotificationTime = 0;
                 this.fromLevelsScreen = false;
                 
+                this.language = new LanguageManager();
                 this.storage = new StorageManager();
                 this.audio = new AudioManager(this.storage);
                 this.particles = new ParticleSystem(this.storage);
-                this.boosters = new BoosterManager(this, this.storage);
+                this.boosters = new BoosterManager(this, this.storage, this.language);
                 
                 this.initThemes();
                 this.initLevels();
@@ -1599,6 +3154,29 @@
                 window.addEventListener('orientationchange', () => {
                     setTimeout(() => this.adjustBoardSize(), 100);
                 });
+                
+                // Dil değişikliklerini dinle
+                document.addEventListener('languageChanged', () => {
+                    this.updateAllTexts();
+                });
+            }
+
+            updateAllTexts() {
+                // Tüm metinleri güncelle
+                this.language.applyLanguage();
+                
+                // Oyun ekranı metinlerini güncelle
+                if (document.getElementById('game-screen').classList.contains('active')) {
+                    this.updateGameTexts();
+                }
+                
+                // Seviyeleri güncelle
+                this.updateLevelsGrid();
+            }
+
+            updateGameTexts() {
+                document.getElementById('mode-indicator').textContent = 
+                    this.language.format('level_x', this.level);
             }
 
             initThemes() {
@@ -1665,7 +3243,7 @@
                         id: i,
                         target: Math.round(target),
                         moves: moves,
-                        difficulty: i <= 20 ? 'Kolay' : i <= 50 ? 'Orta' : i <= 80 ? 'Zor' : 'Çok Zor',
+                        difficulty: i <= 20 ? 'Easy' : i <= 50 ? 'Medium' : i <= 80 ? 'Hard' : 'Very Hard',
                         stars: 0, // 0-3 arası yıldız sayısı
                         completed: false,
                         bestTime: null,
@@ -1697,8 +3275,8 @@
                 
                 // Oyun ekranı
                 document.getElementById('home-btn').onclick = () => this.showConfirm(
-                    'Oyundan Çık',
-                    'Mix Crush oyunundan çıkmak istediğine emin misin? Kaydedilmemiş ilerlemen kaybolabilir.',
+                    this.language.translate('exit_game'),
+                    this.language.translate('exit_confirm'),
                     () => this.showScreen('start-screen')
                 );
                 document.getElementById('game-settings-btn').onclick = () => this.showSettings();
@@ -1708,8 +3286,8 @@
                 document.getElementById('close-settings-btn').onclick = () => this.hideModal('settings-modal');
                 document.getElementById('reset-btn').onclick = () => {
                     this.showConfirm(
-                        'Verileri Sıfırla',
-                        'Tüm Mix Crush oyun verileri silinecek. Bu işlem geri alınamaz. Emin misiniz?',
+                        this.language.translate('reset_data'),
+                        this.language.translate('reset_confirm'),
                         () => this.storage.reset()
                     );
                 };
@@ -1892,23 +3470,20 @@
 
             cancelAd() {
                 this.hideAdModal();
-                this.showToast("Reklam izleme iptal edildi.");
+                this.showToast(this.language.translate('ad_cancelled'));
             }
 
             showBoosterInfo(type) {
-                const booster = this.boosters.types[type];
-                if (!booster) return;
-                
                 const messages = {
-                    'hammer': '🔨 Çekiç: Tek bir şekeri kırmak için kullan. Aktifken bir şekere tıkla.',
-                    'bomb': '💣 Bomba: 3x3 alandaki şekerleri patlatır. Aktifken bir şekere tıkla.',
-                    'shuffle': '🔀 Karıştır: Tüm şekerleri yeniden karıştırır. Hemen etki eder.',
-                    'fish': '🐟 Balık: Rastgele 3 şekeri temizler. Aktifken bir şekere tıkla.',
-                    'coconut': '🥥 Hindistan Cevizi: Tüm sütunu temizler. Aktifken bir şekere tıkla.'
+                    'hammer': this.language.translate('hammer_info'),
+                    'bomb': this.language.translate('bomb_info'),
+                    'shuffle': this.language.translate('shuffle_info'),
+                    'fish': this.language.translate('fish_info'),
+                    'coconut': this.language.translate('coconut_info')
                 };
                 
                 const info = document.getElementById('booster-info');
-                info.textContent = messages[type] || booster.desc;
+                info.textContent = messages[type];
                 info.classList.remove('show');
                 
                 // Küçük gecikme ile göster
@@ -1923,76 +3498,169 @@
             }
 
             watchAd() {
-                // Reklam izleme simülasyonu
-                this.showToast("Reklam izleniyor...");
+                // Reklam izleme simülasyonu - yeni sekmede aç
+                this.showToast(this.language.translate('watching_ad'));
                 
-                // Yeni sekmede reklam aç (simülasyon)
-                this.adWindow = window.open('', '_blank', 'width=400,height=600');
-                if (this.adWindow) {
-                    this.adWindow.document.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <title>Reklam - Mix Crush</title>
-                            <style>
-                                body { 
-                                    margin: 0; 
-                                    padding: 20px; 
-                                    font-family: Arial; 
-                                    background: linear-gradient(135deg, #667eea, #764ba2);
-                                    color: white;
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: center;
-                                    justify-content: center;
-                                    height: 100vh;
-                                    text-align: center;
-                                }
-                                h1 { font-size: 36px; margin-bottom: 20px; }
-                                p { font-size: 18px; margin-bottom: 30px; }
-                                .countdown {
-                                    font-size: 48px;
-                                    font-weight: bold;
-                                    margin: 20px 0;
-                                    color: #ffd700;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <h1>🎬 Mix Crush Reklamı</h1>
-                            <p>Teşekkürler! Reklamı izlediğiniz için booster kazandınız.</p>
-                            <div class="countdown" id="countdown">3</div>
-                            <p>Bu pencere otomatik olarak kapanacak...</p>
-                            <script>
-                                // Geri sayım
-                                let time = 3;
-                                const countdownEl = document.getElementById('countdown');
+                // Yeni sekmede reklam aç
+                const adTitle = this.language.translate('ad_title');
+                const adText = this.language.translate('ad_text');
+                const adClosing = this.language.translate('ad_closing');
+                
+                // Reklam HTML içeriği
+                const adHTML = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>${adTitle}</title>
+                        <style>
+                            body { 
+                                margin: 0; 
+                                padding: 20px; 
+                                font-family: Arial, sans-serif; 
+                                background: linear-gradient(135deg, #667eea, #764ba2);
+                                color: white;
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: center;
+                                min-height: 100vh;
+                                text-align: center;
+                                overflow: hidden;
+                            }
+                            .container {
+                                max-width: 400px;
+                                width: 100%;
+                                padding: 20px;
+                            }
+                            h1 { 
+                                font-size: 32px; 
+                                margin-bottom: 20px;
+                                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                            }
+                            p { 
+                                font-size: 16px; 
+                                margin-bottom: 30px;
+                                line-height: 1.5;
+                                opacity: 0.9;
+                            }
+                            .countdown {
+                                font-size: 48px;
+                                font-weight: bold;
+                                margin: 30px 0;
+                                color: #ffd700;
+                                text-shadow: 0 0 10px rgba(255,215,0,0.5);
+                            }
+                            .loader {
+                                width: 80px;
+                                height: 80px;
+                                border: 5px solid rgba(255,255,255,0.1);
+                                border-radius: 50%;
+                                border-top-color: #ffd700;
+                                animation: spin 1s linear infinite;
+                                margin: 20px auto;
+                            }
+                            @keyframes spin {
+                                0% { transform: rotate(0deg); }
+                                100% { transform: rotate(360deg); }
+                            }
+                            .ad-footer {
+                                font-size: 12px;
+                                opacity: 0.7;
+                                margin-top: 30px;
+                                border-top: 1px solid rgba(255,255,255,0.1);
+                                padding-top: 15px;
+                                width: 100%;
+                            }
+                            .close-btn {
+                                background: rgba(255,255,255,0.1);
+                                border: none;
+                                color: white;
+                                padding: 10px 20px;
+                                border-radius: 25px;
+                                cursor: pointer;
+                                font-size: 14px;
+                                margin-top: 20px;
+                                transition: all 0.3s ease;
+                            }
+                            .close-btn:hover {
+                                background: rgba(255,255,255,0.2);
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <h1>🎬 ${adTitle}</h1>
+                            <div class="loader"></div>
+                            <div class="countdown" id="countdown">5</div>
+                            <p>${adText}</p>
+                            <p><small>${adClosing}</small></p>
+                            
+                            <button class="close-btn" id="manualClose">${this.language.translate('close') || 'Close'}</button>
+                            
+                            <div class="ad-footer">
+                                Mix Crush - ${this.language.translate('advertisement') || 'Advertisement'}
+                            </div>
+                        </div>
+                        
+                        <script>
+                            let time = 5;
+                            const countdownEl = document.getElementById('countdown');
+                            const manualCloseBtn = document.getElementById('manualClose');
+                            
+                            // Geri sayım
+                            const timer = setInterval(() => {
+                                time--;
+                                countdownEl.textContent = time;
                                 
-                                const timer = setInterval(() => {
-                                    time--;
-                                    countdownEl.textContent = time;
-                                    
-                                    if (time <= 0) {
-                                        clearInterval(timer);
-                                        // Oyun penceresine mesaj gönder
-                                        try {
-                                            window.opener.postMessage('ad_completed', '*');
-                                        } catch(e) {}
-                                        window.close();
+                                if (time <= 0) {
+                                    clearInterval(timer);
+                                    completeAd();
+                                }
+                            }, 1000);
+                            
+                            // Manuel kapatma butonu
+                            manualCloseBtn.addEventListener('click', () => {
+                                clearInterval(timer);
+                                completeAd();
+                            });
+                            
+                            // Reklam tamamlandığında
+                            function completeAd() {
+                                try {
+                                    // Ana pencereye mesaj gönder
+                                    if (window.opener && !window.opener.closed) {
+                                        window.opener.postMessage('ad_completed', '*');
                                     }
-                                }, 1000);
-                            <\/script>
-                        </body>
-                        </html>
-                    `);
+                                } catch(e) {
+                                    console.log('Ana pencere mesaj gönderilemedi');
+                                }
+                                
+                                // Sekmeyi kapat
+                                setTimeout(() => {
+                                    window.close();
+                                }, 500);
+                            }
+                            
+                            // Pencere kapanırsa
+                            window.addEventListener('beforeunload', () => {
+                                completeAd();
+                            });
+                        <\/script>
+                    </body>
+                    </html>
+                `;
+                
+                // Yeni sekme aç
+                this.adWindow = window.open();
+                if (this.adWindow) {
+                    this.adWindow.document.write(adHTML);
+                    this.adWindow.document.close();
                     
-                    // Reklam penceresini kontrol et
+                    // Ad penceresini takip et
                     this.startAdWindowCheck();
                 } else {
-                    // Pencere açılamazsa direkt booster ekle
-                    this.addBoosterByAd();
-                    this.hideAdModal();
-                    this.showToast("Reklam izlendi! Booster eklendi.");
+                    // Pencere açılamazsa simüle et
+                    this.simulateAd();
                 }
             }
 
@@ -2005,16 +3673,36 @@
                         // Reklam izlendi, booster ekle
                         this.addBoosterByAd();
                         this.hideAdModal();
-                        this.showToast("Reklam izlendi! Booster eklendi.");
+                        this.showToast(this.language.translate('ad_watched'));
                     }
-                }, 500);
+                }, 1000);
+                
+                // 10 saniye sonra otomatik temizle (güvenlik için)
+                setTimeout(() => {
+                    if (this.adCheckInterval) {
+                        clearInterval(this.adCheckInterval);
+                        this.adCheckInterval = null;
+                    }
+                }, 10000);
+            }
+
+            simulateAd() {
+                // Reklam penceresi açılamazsa simüle et
+                this.showToast(this.language.translate('watching_ad'));
+                
+                // 5 saniye sonra booster ekle
+                setTimeout(() => {
+                    this.addBoosterByAd();
+                    this.hideAdModal();
+                    this.showToast(this.language.translate('ad_watched'));
+                }, 5000);
             }
 
             addBoosterByAd() {
                 if (this.requestedBooster) {
                     // Sadece 1 adet booster ekle
                     this.boosters.addByAd(this.requestedBooster);
-                    this.showToast(`🎉 +1 ${this.boosters.types[this.requestedBooster].name} kazandın!`);
+                    this.showToast(this.language.format('booster_added', this.boosters.types[this.requestedBooster].name));
                 }
                 this.requestedBooster = null;
                 
@@ -2022,6 +3710,16 @@
                 if (this.adCheckInterval) {
                     clearInterval(this.adCheckInterval);
                     this.adCheckInterval = null;
+                }
+                
+                // Ad penceresini kapat
+                if (this.adWindow && !this.adWindow.closed) {
+                    try {
+                        this.adWindow.close();
+                    } catch(e) {
+                        // Pencere kapatılamazsa görmezden gel
+                    }
+                    this.adWindow = null;
                 }
             }
 
@@ -2054,6 +3752,10 @@
                 
                 const unlockedLevels = progress.unlockedLevels || 1;
                 document.getElementById('open-levels').textContent = unlockedLevels;
+                document.getElementById('levels-info').innerHTML = `
+                    <span data-i18n="open_levels">${this.language.translate('open_levels')}:</span> 
+                    <span id="open-levels">${unlockedLevels}</span>/100
+                `;
                 
                 for (let i = 1; i <= 100; i++) {
                     const levelBtn = document.createElement('button');
@@ -2125,7 +3827,8 @@
                 // Booster'ları kontrol et
                 this.checkAndRefillBoosters();
                 
-                document.getElementById('mode-indicator').textContent = `Mix Crush Seviye ${this.level}`;
+                document.getElementById('mode-indicator').textContent = 
+                    this.language.format('level_x', this.level);
                 
                 // Timer'ı başlat
                 this.startTimer();
@@ -2135,7 +3838,7 @@
                 this.updateUI();
                 this.boosters.updateUI();
                 
-                this.showToast(`Mix Crush Seviye ${this.level} başladı!`);
+                this.showToast(this.language.format('level_start', this.level));
             }
 
             checkAndRefillBoosters() {
@@ -2341,7 +4044,7 @@
                 const canUse = this.boosters.use(type);
                 if (canUse) {
                     this.currentBooster = type;
-                    this.showGameNotification(`${this.boosters.types[type].name} aktif! Bir şekere tıkla.`);
+                    this.showGameNotification(this.language.translate('booster_active'));
                     this.audio.playSound('special');
                 }
             }
@@ -2360,7 +4063,7 @@
 
             cancelBooster() {
                 this.currentBooster = null;
-                this.showGameNotification("Booster iptal edildi.");
+                this.showGameNotification(this.language.translate('booster_cancelled'));
             }
 
             select(candy) {
@@ -2455,14 +4158,14 @@
                 const type1 = candy1.special;
                 const type2 = candy2.special;
                 
-                this.showGameNotification(`✨ İki özel şeker birleşti!`);
+                this.showGameNotification(`✨ ${this.language.translate('two_specials_combined')}!`);
                 this.stats.specialsUsed += 2;
                 
                 if ((type1 === 'color-bomb' && type2 === 'color-bomb') || 
                     (type2 === 'color-bomb' && type1 === 'color-bomb')) {
                     // İki renk bombası: tüm tahtayı temizle
                     matches = this.getAllCandies();
-                    this.showGameNotification("💥 MEGA PATLAMA! Tüm şekerler temizlendi!");
+                    this.showGameNotification(`💥 ${this.language.translate('mega_explosion')}!`);
                 } 
                 else if ((type1 === 'color-bomb' && type2 === 'striped') || 
                          (type2 === 'color-bomb' && type1 === 'striped')) {
@@ -2470,27 +4173,27 @@
                     const colorIndex = type1 === 'color-bomb' ? candy2.colorIndex : candy1.colorIndex;
                     matches = this.getCandiesByColor(colorIndex);
                     this.convertToSpecial(matches, 'striped');
-                    this.showGameNotification("🌈 Tüm aynı renkler çizgili şekere dönüştü!");
+                    this.showGameNotification(`🌈 ${this.language.translate('all_same_color_striped')}!`);
                 }
                 else if ((type1 === 'striped' && type2 === 'striped')) {
                     // İki çizgili: çapraz satır ve sütun temizle
                     matches = this.getCrossCandies(candy1.row, candy1.col, candy2.row, candy2.col);
-                    this.showGameNotification("❌ ÇAPRAZ TEMİZLİK!");
+                    this.showGameNotification(`❌ ${this.language.translate('cross_clean')}!`);
                 }
                 else if ((type1 === 'wrapped' && type2 === 'wrapped')) {
                     // İki wrapped: 5x5 alan temizle
                     matches = this.getAreaCandies(candy1.row, candy1.col, 5);
-                    this.showGameNotification("💣 BÜYÜK PATLAMA! 5x5 alan temizlendi!");
+                    this.showGameNotification(`💣 ${this.language.translate('big_explosion')}!`);
                 }
                 else if ((type1 === 'fish' && type2 === 'fish')) {
                     // İki balık: tüm rastgele şekerleri temizle
                     matches = this.getRandomCandies(12);
-                    this.showGameNotification("🐟🐟 BALIK SÜRÜSÜ! 12 şeker temizlendi!");
+                    this.showGameNotification(`🐟🐟 ${this.language.translate('fish_swarm')}!`);
                 }
                 else if ((type1 === 'coconut' && type2 === 'coconut')) {
                     // İki hindistan cevizi: iki sütun temizle
                     matches = [...this.getColumnCandies(candy1.col), ...this.getColumnCandies(candy2.col)];
-                    this.showGameNotification("🥥🥥 ÇİFT SÜTUN TEMİZLİĞİ!");
+                    this.showGameNotification(`🥥🥥 ${this.language.translate('double_column_clean')}!`);
                 }
                 
                 this.processSpecialMatches(matches, 500);
@@ -2506,35 +4209,35 @@
                         // Çizgili şeker: tüm satır veya sütun temizle
                         if (Math.random() > 0.5) {
                             matches = this.getRowCandies(specialCandy.row);
-                            this.showGameNotification("➡️ Tüm satır temizlendi!");
+                            this.showGameNotification(`➡️ ${this.language.translate('row_cleared')}!`);
                         } else {
                             matches = this.getColumnCandies(specialCandy.col);
-                            this.showGameNotification("⬇️ Tüm sütun temizlendi!");
+                            this.showGameNotification(`⬇️ ${this.language.translate('column_cleared')}!`);
                         }
                         break;
                         
                     case 'wrapped':
                         // Wrapped şeker: 3x3 alan temizle
                         matches = this.getAreaCandies(specialCandy.row, specialCandy.col, 3);
-                        this.showGameNotification("💥 3x3 alan temizlendi!");
+                        this.showGameNotification(`💥 ${this.language.translate('area_cleared')}!`);
                         break;
                         
                     case 'color-bomb':
                         // Renk bombası: tüm aynı renkleri temizle
                         matches = this.getCandiesByColor(normalCandy.colorIndex);
-                        this.showGameNotification(`🎨 Tüm ${normalCandy.type} şekerleri temizlendi!`);
+                        this.showGameNotification(`🎨 ${this.language.format('all_candies_cleared', normalCandy.type)}!`);
                         break;
                         
                     case 'fish':
                         // Balık: rastgele 3 şeker temizle
                         matches = this.getRandomCandies(3);
-                        this.showGameNotification("🐟 Balık 3 rastgele şekeri yedi!");
+                        this.showGameNotification(`🐟 ${this.language.translate('fish_ate_candies')}!`);
                         break;
                         
                     case 'coconut':
                         // Hindistan cevizi: tüm sütun temizle
                         matches = this.getColumnCandies(specialCandy.col);
-                        this.showGameNotification("🥥 Hindistan cevizi tüm sütunu temizledi!");
+                        this.showGameNotification(`🥥 ${this.language.translate('coconut_cleared_column')}!`);
                         break;
                 }
                 
@@ -2670,11 +4373,11 @@
                 
                 // Oyun bildirimleri
                 if (matches.length >= 5) {
-                    this.showGameNotification("🔥 Müthiş! 5+ şeker eşleştirdin!");
+                    this.showGameNotification(`🔥 ${this.language.translate('awesome_5_matches')}!`);
                 } else if (matches.length === 4) {
-                    this.showGameNotification("✨ Harika! 4 şeker eşleştirdin!");
+                    this.showGameNotification(`✨ ${this.language.translate('great_4_matches')}!`);
                 } else if (this.combo > 3) {
-                    this.showGameNotification(`🎯 Combo ${this.combo}x!`);
+                    this.showGameNotification(`🎯 ${this.language.format('combo_x', this.combo)}!`);
                 }
                 
                 // Eşleşen şekerleri kaldır
@@ -2710,7 +4413,7 @@
                     center.special = 'color-bomb';
                     center.isSpecial = true;
                     this.stats.specials++;
-                    this.showGameNotification("💣 Renk Bombası Oluştu!");
+                    this.showGameNotification(`💣 ${this.language.translate('color_bomb_created')}!`);
                     return center;
                 } else if (matches.length === 4) {
                     // 4 eşleşme: wrapped veya striped
@@ -2720,7 +4423,9 @@
                     center.special = isHorizontal ? 'striped' : 'wrapped';
                     center.isSpecial = true;
                     this.stats.specials++;
-                    this.showGameNotification(isHorizontal ? "🎇 Çizgili Şeker Oluştu!" : "🎁 Paketli Şeker Oluştu!");
+                    this.showGameNotification(isHorizontal ? 
+                        `🎇 ${this.language.translate('striped_candy_created')}!` : 
+                        `🎁 ${this.language.translate('wrapped_candy_created')}!`);
                     return center;
                 } else if (matches.length === 3) {
                     // 3 eşleşmede %10 şansla balık veya hindistan cevizi
@@ -2729,7 +4434,9 @@
                         center.special = Math.random() > 0.5 ? 'fish' : 'coconut';
                         center.isSpecial = true;
                         this.stats.specials++;
-                        this.showGameNotification(center.special === 'fish' ? "🐟 Balık Oluştu!" : "🥥 Hindistan Cevizi Oluştu!");
+                        this.showGameNotification(center.special === 'fish' ? 
+                            `🐟 ${this.language.translate('fish_created')}!` : 
+                            `🥥 ${this.language.translate('coconut_created')}!`);
                         return center;
                     }
                 }
@@ -2879,7 +4586,7 @@
 
             // === OYUN DURUMU ===
             updateUI() {
-                document.getElementById('score-display').textContent = this.score.toLocaleString('tr-TR');
+                document.getElementById('score-display').textContent = this.score.toLocaleString(this.language.currentLang);
                 document.getElementById('moves-display').textContent = this.moves;
                 document.getElementById('level-display').textContent = this.level;
             }
@@ -2958,10 +4665,12 @@
             }
 
             fillGameOver(won) {
-                document.getElementById('game-over-title').textContent = 
-                    won ? '🎉 Mix Crush Seviye Tamamlandı!' : '😔 Oyun Bitti!';
+                const title = won ? 
+                    `🎉 ${this.language.translate('level_completed')}` : 
+                    `😔 ${this.language.translate('game_over')}`;
+                document.getElementById('game-over-title').textContent = title;
                 
-                document.getElementById('final-score').textContent = this.score.toLocaleString('tr-TR');
+                document.getElementById('final-score').textContent = this.score.toLocaleString(this.language.currentLang);
                 
                 const min = Math.floor(this.gameTime / 60);
                 const sec = (this.gameTime % 60).toString().padStart(2, '0');
@@ -2978,7 +4687,7 @@
             nextLevel() {
                 this.hideModal('game-over-modal');
                 this.loadLevel(this.level + 1);
-                this.showToast(`Mix Crush Seviye ${this.level} başladı!`);
+                this.showToast(this.language.format('level_start', this.level));
             }
 
             restartLevel() {
@@ -3014,11 +4723,11 @@
                 const levelStars = stats.levelStars || {};
                 
                 document.getElementById('total-games').textContent = stats.totalGames || 0;
-                document.getElementById('total-score').textContent = (stats.totalScore || 0).toLocaleString('tr-TR');
+                document.getElementById('total-score').textContent = (stats.totalScore || 0).toLocaleString(this.language.currentLang);
                 document.getElementById('total-time').textContent = this.formatTime(stats.totalTime || 0);
                 document.getElementById('best-combo').textContent = stats.bestCombo || 0;
                 
-                document.getElementById('best-score').textContent = (stats.bestScore || 0).toLocaleString('tr-TR');
+                document.getElementById('best-score').textContent = (stats.bestScore || 0).toLocaleString(this.language.currentLang);
                 
                 // En hızlı seviye
                 let fastestLevel = null;
@@ -3033,7 +4742,8 @@
                 if (fastestLevel) {
                     const min = Math.floor(fastestTime / 60);
                     const sec = (fastestTime % 60).toString().padStart(2, '0');
-                    document.getElementById('fastest-level').textContent = `Seviye ${fastestLevel}: ${min}:${sec}`;
+                    document.getElementById('fastest-level').textContent = 
+                        `${this.language.translate('level')} ${fastestLevel}: ${min}:${sec}`;
                 } else {
                     document.getElementById('fastest-level').textContent = '-';
                 }
@@ -3052,7 +4762,10 @@
                 const sortedLevels = Object.keys(levelTimes).sort((a, b) => b - a).slice(0, 10);
                 
                 if (sortedLevels.length === 0) {
-                    levelTimesContainer.innerHTML = '<div class="text-center" style="color:#999; padding:15px; font-size:14px;">Henüz seviye tamamlanmadı</div>';
+                    levelTimesContainer.innerHTML = 
+                        `<div class="text-center" style="color:#999; padding:15px; font-size:14px;">
+                            ${this.language.translate('no_levels_completed')}
+                        </div>`;
                 } else {
                     sortedLevels.forEach(level => {
                         const time = levelTimes[level];
@@ -3063,7 +4776,7 @@
                         const item = document.createElement('div');
                         item.className = 'level-time-item';
                         item.innerHTML = `
-                            <div class="level-time-number">Seviye ${level}</div>
+                            <div class="level-time-number">${this.language.translate('level')} ${level}</div>
                             <div>
                                 <div class="level-time-value">${min}:${sec}</div>
                                 ${stars > 0 ? `<div style="font-size:10px; color:var(--gold);">${'⭐'.repeat(stars)}</div>` : ''}
@@ -3081,11 +4794,11 @@
                 const seconds = totalSeconds % 60;
                 
                 if (hours > 0) {
-                    return `${hours}sa ${minutes}dk`;
+                    return `${hours}h ${minutes}m`;
                 } else if (minutes > 0) {
-                    return `${minutes}dk ${seconds}sn`;
+                    return `${minutes}m ${seconds}s`;
                 } else {
-                    return `${seconds}sn`;
+                    return `${seconds}s`;
                 }
             }
 
@@ -3355,15 +5068,16 @@
 
         // === BOOSTER MANAGER ===
         class BoosterManager {
-            constructor(game, storage) {
+            constructor(game, storage, language) {
                 this.game = game;
                 this.storage = storage;
+                this.language = language;
                 this.types = {
-                    hammer: { count: 3, icon: '🔨', name: 'Çekiç', desc: 'Tek bir şekeri kır' },
-                    bomb: { count: 2, icon: '💣', name: 'Bomba', desc: '3x3 alandaki şekerleri patlat' },
-                    shuffle: { count: 1, icon: '🔀', name: 'Karıştır', desc: 'Tüm şekerleri karıştır' },
-                    fish: { count: 2, icon: '🐟', name: 'Balık', desc: 'Rastgele 3 şekeri temizle' },
-                    coconut: { count: 1, icon: '🥥', name: 'Hindistan Cevizi', desc: 'Tüm sütunu temizle' }
+                    hammer: { count: 3, icon: '🔨', name: 'Hammer', desc: 'hammer_desc' },
+                    bomb: { count: 2, icon: '💣', name: 'Bomb', desc: 'bomb_desc' },
+                    shuffle: { count: 1, icon: '🔀', name: 'Shuffle', desc: 'shuffle_desc' },
+                    fish: { count: 2, icon: '🐟', name: 'Fish', desc: 'fish_desc' },
+                    coconut: { count: 1, icon: '🥥', name: 'Coconut', desc: 'coconut_desc' }
                 };
                 this.load();
             }
@@ -3427,7 +5141,7 @@
                     case 'shuffle':
                         this.game.createBoard();
                         this.game.render();
-                        this.game.showGameNotification("🔀 Tahta karıştırıldı!");
+                        this.game.showGameNotification(`🔀 ${this.language.translate('board_shuffled')}!`);
                         break;
                     case 'fish':
                         const fishMatches = this.game.getRandomCandies(3);
@@ -3475,10 +5189,10 @@
                         addPlus.textContent = 'add+';
                         btn.appendChild(addPlus);
                         
-                        btn.title = `${this.types[type].name} (Tükendi - Reklam izle!)`;
+                        btn.title = `${this.language.translate(this.types[type].desc)} (${this.language.translate('out_of_stock')} - ${this.language.translate('watch_ad')}!)`;
                     } else {
                         btn.classList.toggle('disabled', false);
-                        btn.title = `${this.types[type].name} - ${this.types[type].desc}`;
+                        btn.title = this.language.translate(this.types[type].desc);
                     }
                 });
             }
@@ -3498,9 +5212,9 @@
                 if (event.data === 'ad_completed' && window.game) {
                     window.game.addBoosterByAd();
                     window.game.hideAdModal();
-                    window.game.showToast("🎉 Reklam izlendi! +1 Booster eklendi.");
+                    window.game.showToast(window.game.language.translate('ad_watched'));
                 }
-            });
+            }, false);
             
             // Oyunu başlat
             window.game = new MixCrushGame();

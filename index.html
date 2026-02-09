@@ -2403,7 +2403,7 @@
                             'bomb_desc': 'Limpar área 3x3',
                             'shuffle_desc': 'Embaralhar tabuleiro',
                             'fish_desc': 'Limpar doces aleatórios',
-                            'coconut_desc': 'Limpar coluna',
+                            'coconut_desc': 'Limpar columna',
                             
                             'game_settings': 'Configurações do Mix Crush',
                             'sound_settings': '🔊 Configurações de Som',
@@ -4936,64 +4936,157 @@
             }
         }
 
-        // === AUDIO MANAGER ===
+        // === AUDIO MANAGER - SES DOSYALARI İLE GÜNCELLENMİŞ ===
         class AudioManager {
             constructor(storage) {
                 this.storage = storage;
+                this.audioContext = null;
                 this.sounds = {};
                 this.isMuted = false;
+                this.soundFiles = {
+                    match: 'sounds/match.mp3',
+                    swap: 'sounds/swap.mp3',
+                    click: 'sounds/click.mp3',
+                    error: 'sounds/error.mp3',
+                    win: 'sounds/win.mp3',
+                    lose: 'sounds/lose.mp3',
+                    special: 'sounds/special.mp3',
+                    combo: 'sounds/combo.mp3',
+                    boom: 'sounds/boom.mp3',
+                    background: 'sounds/background.mp3'
+                };
                 this.init();
             }
             
-            init() {
-                this.createSound('match', 600, 0.15);
-                this.createSound('swap', 400, 0.1);
-                this.createSound('click', 800, 0.05);
-                this.createSound('error', 200, 0.2);
-                this.createSound('win', [523.25, 659.25, 783.99], 0.5);
-                this.createSound('lose', [261.63, 220, 196], 0.4);
-                this.createSound('special', 1000, 0.25);
-                this.createSound('combo', [1200, 1400, 1600], 0.3);
-                this.createSound('boom', 150, 0.3);
+            async init() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    await this.preloadSounds();
+                } catch (e) {
+                    console.warn('Web Audio API not supported, falling back to HTML5 Audio:', e);
+                    this.useHTML5Audio = true;
+                }
             }
             
-            createSound(name, frequency, duration) {
-                this.sounds[name] = { frequency, duration };
+            async preloadSounds() {
+                if (this.useHTML5Audio) return;
+                
+                // Sadece temel sesleri önceden yükle
+                const basicSounds = ['match', 'swap', 'click', 'error'];
+                
+                for (const soundName of basicSounds) {
+                    await this.loadSound(soundName);
+                }
+            }
+            
+            async loadSound(soundName) {
+                try {
+                    const response = await fetch(this.soundFiles[soundName]);
+                    const arrayBuffer = await response.arrayBuffer();
+                    const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                    this.sounds[soundName] = audioBuffer;
+                } catch (e) {
+                    console.warn(`Failed to load sound ${soundName}:`, e);
+                    this.useHTML5Audio = true;
+                }
             }
             
             playSound(type) {
                 if (this.isMuted || !this.storage.get('settings').effects) return;
                 
-                const sound = this.sounds[type];
-                if (!sound) return;
+                const volume = this.storage.get('settings').sfx / 100 * 0.7;
                 
-                const volume = this.storage.get('settings').sfx / 100 * 0.3;
+                if (this.useHTML5Audio || !this.sounds[type]) {
+                    this.playHTML5Sound(type, volume);
+                } else {
+                    this.playBufferSound(type, volume);
+                }
+            }
+            
+            playHTML5Sound(type, volume) {
+                try {
+                    const audio = new Audio();
+                    audio.volume = volume;
+                    
+                    // Ses dosyası URL'si
+                    const soundFile = this.soundFiles[type];
+                    if (soundFile) {
+                        audio.src = soundFile;
+                        audio.play().catch(e => console.warn(`Audio play failed: ${e}`));
+                    } else {
+                        // Eğer dosya yoksa, basit bir bip sesi oluştur
+                        this.createFallbackSound(type, volume);
+                    }
+                } catch (e) {
+                    console.warn('HTML5 Audio failed, using fallback:', e);
+                    this.createFallbackSound(type, volume);
+                }
+            }
+            
+            playBufferSound(type, volume) {
+                if (!this.sounds[type]) {
+                    this.createFallbackSound(type, volume);
+                    return;
+                }
                 
                 try {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
+                    const source = this.audioContext.createBufferSource();
+                    const gainNode = this.audioContext.createGain();
+                    
+                    source.buffer = this.sounds[type];
+                    source.connect(gainNode);
+                    gainNode.connect(this.audioContext.destination);
+                    
+                    gainNode.gain.value = volume;
+                    source.start(0);
+                } catch (e) {
+                    console.warn('Buffer sound play failed:', e);
+                    this.playHTML5Sound(type, volume);
+                }
+            }
+            
+            createFallbackSound(type, volume) {
+                try {
+                    if (!this.audioContext) return;
+                    
+                    const oscillator = this.audioContext.createOscillator();
+                    const gainNode = this.audioContext.createGain();
                     
                     oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
+                    gainNode.connect(this.audioContext.destination);
                     
-                    if (Array.isArray(sound.frequency)) {
-                        const now = audioContext.currentTime;
-                        sound.frequency.forEach((freq, i) => {
-                            oscillator.frequency.setValueAtTime(freq, now + i * 0.1);
+                    // Ses türüne göre frekans ayarla
+                    const frequencies = {
+                        'match': 800,
+                        'swap': 600,
+                        'click': 1000,
+                        'error': 300,
+                        'win': [523.25, 659.25, 783.99],
+                        'lose': [261.63, 220, 196],
+                        'special': 1200,
+                        'combo': [1000, 1200, 1400],
+                        'boom': 150
+                    };
+                    
+                    const freq = frequencies[type] || 800;
+                    
+                    if (Array.isArray(freq)) {
+                        const now = this.audioContext.currentTime;
+                        freq.forEach((f, i) => {
+                            oscillator.frequency.setValueAtTime(f, now + i * 0.1);
                         });
                     } else {
-                        oscillator.frequency.setValueAtTime(sound.frequency, audioContext.currentTime);
+                        oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
                     }
                     
                     oscillator.type = 'sine';
-                    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + sound.duration);
+                    gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.3);
                     
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + sound.duration);
+                    oscillator.start(this.audioContext.currentTime);
+                    oscillator.stop(this.audioContext.currentTime + 0.3);
                 } catch (e) {
-                    console.warn('Audio error:', e);
+                    console.warn('Fallback sound failed:', e);
                 }
             }
             

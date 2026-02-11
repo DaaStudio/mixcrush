@@ -161,10 +161,9 @@
 
         /* === DİL SEÇİMİ === */
         .lang-selector {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 9999;
+            position: relative;
+            width: 100%;
+            margin: 20px 0 15px;
         }
 
         .lang-btn {
@@ -172,37 +171,39 @@
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 25px;
-            padding: 8px 15px;
+            padding: 12px 20px;
             color: white;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             transition: all 0.3s ease;
-            min-width: 120px;
+            width: 100%;
             justify-content: center;
+            font-size: 15px;
         }
 
         .lang-btn:hover {
             background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
 
         .lang-dropdown {
             position: absolute;
             top: 100%;
+            left: 0;
             right: 0;
             margin-top: 5px;
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 10px 0;
-            min-width: 180px;
+            width: 100%;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: none;
             z-index: 9999;
-            max-height: 400px;
+            max-height: 350px;
             overflow-y: auto;
         }
 
@@ -1074,13 +1075,11 @@
             }
             
             .lang-selector {
-                top: 10px;
-                right: 10px;
+                margin: 15px 0 10px;
             }
             
             .lang-btn {
-                padding: 6px 12px;
-                min-width: 100px;
+                padding: 10px 16px;
             }
         }
 
@@ -1172,18 +1171,16 @@
             }
             
             .lang-selector {
-                top: 8px;
-                right: 8px;
+                margin: 12px 0 8px;
             }
             
             .lang-btn {
-                padding: 5px 10px;
-                min-width: 90px;
+                padding: 8px 14px;
                 font-size: 14px;
             }
             
             .lang-dropdown {
-                min-width: 160px;
+                max-height: 300px;
             }
         }
 
@@ -1236,8 +1233,7 @@
             }
             
             .lang-btn {
-                min-width: 80px;
-                padding: 4px 8px;
+                padding: 7px 12px;
             }
         }
 
@@ -1284,8 +1280,8 @@
             }
             
             .lang-btn {
-                min-width: 70px;
-                font-size: 12px;
+                padding: 6px 10px;
+                font-size: 13px;
             }
         }
 
@@ -1350,18 +1346,6 @@
     </style>
 </head>
 <body>
-    <!-- DİL SEÇİMİ -->
-    <div class="lang-selector">
-        <button id="lang-btn" class="lang-btn">
-            <span id="current-lang-flag">🇬🇧</span>
-            <span id="current-lang-name">English</span>
-            <span style="font-size:12px;">▼</span>
-        </button>
-        <div id="lang-dropdown" class="lang-dropdown">
-            <!-- Diller JavaScript ile eklenecek -->
-        </div>
-    </div>
-
     <!-- ANA MENÜ -->
     <div id="start-screen" class="screen active">
         <div class="start-container">
@@ -1507,6 +1491,19 @@
             <div class="modal-header">
                 <h2 data-i18n="game_settings">Mix Crush Settings</h2>
                 <button class="close-btn" id="close-settings">×</button>
+            </div>
+            
+            <!-- DİL SEÇİMİ (AYARLAR İÇİNE TAŞINDI) -->
+            <h3 data-i18n="language_settings">🌐 Language Settings</h3>
+            <div class="lang-selector">
+                <button id="lang-btn" class="lang-btn">
+                    <span id="current-lang-flag">🇬🇧</span>
+                    <span id="current-lang-name">English</span>
+                    <span style="font-size:12px; margin-left: auto;">▼</span>
+                </button>
+                <div id="lang-dropdown" class="lang-dropdown">
+                    <!-- Diller JavaScript ile eklenecek -->
+                </div>
             </div>
             
             <h3 data-i18n="sound_settings">🔊 Sound Settings</h3>
@@ -1706,6 +1703,9 @@
                             'close': 'Close',
                             'advertisement': 'Advertisement',
                             
+                            // Ayarlar için yeni çeviriler
+                            'language_settings': '🌐 Language Settings',
+                            
                             // Şekil seçim
                             'select_theme': 'Select Theme',
                             'select_theme_subtitle': 'Choose your favorite theme and start playing',
@@ -1848,6 +1848,9 @@
                             'close': 'Kapat',
                             'advertisement': 'Reklam',
                             
+                            // Ayarlar için yeni çeviriler
+                            'language_settings': '🌐 Dil Ayarları',
+                            
                             // Şekil seçim
                             'select_theme': 'Tema Seç',
                             'select_theme_subtitle': 'Favori temanı seç ve oyuna başla',
@@ -1989,6 +1992,8 @@
                             'close': 'Cerrar',
                             'advertisement': 'Anuncio',
                             
+                            'language_settings': '🌐 Configuración de Idioma',
+                            
                             'select_theme': 'Seleccionar Tema',
                             'select_theme_subtitle': 'Elige tu tema favorito y comienza a jugar',
                             'confirm_start': 'CONFIRMAR Y COMENZAR',
@@ -2088,6 +2093,8 @@
                             'confirm': 'Bestätigen',
                             'close': 'Schließen',
                             'advertisement': 'Werbung',
+                            
+                            'language_settings': '🌐 Spracheinstellungen',
                             
                             'select_theme': 'Theme auswählen',
                             'select_theme_subtitle': 'Wähle dein Lieblingsthema und beginne zu spielen',
@@ -2189,6 +2196,8 @@
                             'close': 'Fermer',
                             'advertisement': 'Publicité',
                             
+                            'language_settings': '🌐 Paramètres de Langue',
+                            
                             'select_theme': 'Choisir un Thème',
                             'select_theme_subtitle': 'Choisissez votre thème préféré et commencez à jouer',
                             'confirm_start': 'CONFIRMER ET COMMENCER',
@@ -2288,6 +2297,8 @@
                             'confirm': 'Conferma',
                             'close': 'Chiudi',
                             'advertisement': 'Pubblicità',
+                            
+                            'language_settings': '🌐 Impostazioni Lingua',
                             
                             'select_theme': 'Seleziona Tema',
                             'select_theme_subtitle': 'Scegli il tuo tema preferito e inizia a giocare',
@@ -2389,6 +2400,8 @@
                             'close': 'Fechar',
                             'advertisement': 'Publicidade',
                             
+                            'language_settings': '🌐 Configurações de Idioma',
+                            
                             'select_theme': 'Selecionar Tema',
                             'select_theme_subtitle': 'Escolha seu tema favorito e comece a jogar',
                             'confirm_start': 'CONFIRMAR E INICIAR',
@@ -2428,7 +2441,7 @@
                             'completed_levels': 'Níveis Concluídos',
                             'level_times': '⏱️ Tempos por Nível',
                             'no_levels_completed': 'Nenhum nível concluído ainda',
-                            'special_stats': '✨ Estatísticas Especiais',
+                            'special_stats': '✨ Estatísticas Especiales',
                             'specials_created': 'Especiais Criados',
                             'matches_made': 'Combinações Feitas',
                             
@@ -2488,6 +2501,8 @@
                             'confirm': 'Подтвердить',
                             'close': 'Закрыть',
                             'advertisement': 'Реклама',
+                            
+                            'language_settings': '🌐 Настройки Языка',
                             
                             'select_theme': 'Выбрать Тему',
                             'select_theme_subtitle': 'Выберите любимую тему и начните играть',
@@ -2589,6 +2604,8 @@
                             'close': 'إغلاق',
                             'advertisement': 'إعلان',
                             
+                            'language_settings': '🌐 إعدادات اللغة',
+                            
                             'select_theme': 'اختر السمة',
                             'select_theme_subtitle': 'اختر سمتك المفضلة وابدأ اللعب',
                             'confirm_start': 'تأكيد والبدء',
@@ -2688,6 +2705,8 @@
                             'confirm': '确认',
                             'close': '关闭',
                             'advertisement': '广告',
+                            
+                            'language_settings': '🌐 语言设置',
                             
                             'select_theme': '选择主题',
                             'select_theme_subtitle': '选择你喜欢的主题并开始游戏',
@@ -2789,6 +2808,8 @@
                             'close': '閉じる',
                             'advertisement': '広告',
                             
+                            'language_settings': '🌐 言語設定',
+                            
                             'select_theme': 'テーマ選択',
                             'select_theme_subtitle': 'お気に入りのテーマを選んでゲーム開始',
                             'confirm_start': '確認して開始',
@@ -2888,6 +2909,8 @@
                             'confirm': '확인',
                             'close': '닫기',
                             'advertisement': '광고',
+                            
+                            'language_settings': '🌐 언어 설정',
                             
                             'select_theme': '테마 선택',
                             'select_theme_subtitle': '좋아하는 테마를 선택하고 게임 시작',

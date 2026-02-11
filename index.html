@@ -167,9 +167,8 @@
         }
 
         .lang-btn {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.3);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: 2px solid transparent;
             border-radius: 25px;
             padding: 12px 20px;
             color: white;
@@ -182,10 +181,11 @@
             width: 100%;
             justify-content: center;
             font-size: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .lang-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: linear-gradient(135deg, #ff4081, var(--secondary));
             transform: scale(1.02);
         }
 
@@ -195,7 +195,7 @@
             left: 0;
             right: 0;
             margin-top: 5px;
-            background: rgba(255,255,255,0.95);
+            background: white;
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 10px 0;
@@ -205,6 +205,7 @@
             z-index: 9999;
             max-height: 350px;
             overflow-y: auto;
+            border: 1px solid rgba(0,0,0,0.1);
         }
 
         .lang-dropdown.show {
@@ -220,6 +221,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             border-bottom: 1px solid rgba(0,0,0,0.05);
+            color: #333;
         }
 
         .lang-option:hover {
@@ -958,6 +960,10 @@
             color: var(--dark-text);
         }
 
+        body.dark-mode .close-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
         body.dark-mode .setting-item {
             background: rgba(255,255,255,0.1);
             color: var(--dark-text);
@@ -972,9 +978,21 @@
             color: var(--dark-text);
         }
 
+        body.dark-mode .level-time-number {
+            color: var(--accent);
+        }
+
+        body.dark-mode .level-time-value {
+            color: var(--dark-text);
+        }
+
         body.dark-mode .result-stat {
             background: rgba(255,255,255,0.1);
             color: var(--dark-text);
+        }
+
+        body.dark-mode .result-stat-value {
+            color: var(--accent);
         }
 
         body.dark-mode .confirm-content {
@@ -992,6 +1010,36 @@
 
         body.dark-mode .level-btn.locked {
             background: linear-gradient(135deg, #444, #666);
+        }
+
+        /* Karanlık mod için dil seçici stilleri */
+        body.dark-mode .lang-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        body.dark-mode .lang-btn:hover {
+            background: linear-gradient(135deg, #ff4081, var(--secondary));
+        }
+
+        body.dark-mode .lang-dropdown {
+            background: var(--dark-card);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .lang-option {
+            color: var(--dark-text);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .lang-option:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .lang-option.active {
+            background: var(--primary);
+            color: white;
         }
 
         /* === BOOSTER REKLAM MODALI === */
@@ -1336,6 +1384,31 @@
         
         .levels-grid-container::-webkit-scrollbar-thumb:hover {
             background: rgba(255,255,255,0.3);
+        }
+        
+        /* Karanlık mod için scrollbar */
+        body.dark-mode .screen::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        
+        body.dark-mode .screen::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        body.dark-mode .screen::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        body.dark-mode .levels-grid-container::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        
+        body.dark-mode .levels-grid-container::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        body.dark-mode .levels-grid-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.25);
         }
         
         /* === LEVELS SCROLL FIX === */
@@ -2162,7 +2235,7 @@
                             'exit_game': 'Spiel verlassen',
                             'exit_confirm': 'Bist du sicher, dass du Mix Crush verlassen möchtest? Ungespeicherter Fortschritt kann verloren gehen.',
                             'reset_data': 'Daten zurücksetzen',
-                            'reset_confirm': 'Alle Mix Crush-Spieldaten werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. Bist du sicher?',
+                            'reset_confirm': 'Alle Mix Crush-Spieldaten werden gelöscht. Esta acción kann nicht rückgängig gemacht werden. Bist du sicher?',
                             'level_start': 'Mix Crush Level {0} gestartet!',
                             'booster_active': 'Booster aktiv! Klicke auf eine Süßigkeit.',
                             'booster_cancelled': 'Booster abgebrochen.',
@@ -2236,12 +2309,12 @@
                             'fastest_level': 'Niveau le Plus Rapide',
                             'completed_levels': 'Niveaux Terminés',
                             'level_times': '⏱️ Temps par Niveau',
-                            'no_levels_completed': 'Aucun niveau terminé pour l\'instant',
+                            'no_levels_completed': 'Aucun nivel terminé pour l\'instant',
                             'special_stats': '✨ Statistiques Spéciales',
                             'specials_created': 'Spéciaux Créés',
                             'matches_made': 'Correspondances Réalisées',
                             
-                            'level_completed': 'Niveau Terminé!',
+                            'level_completed': 'Nivel Terminé!',
                             'game_over': 'Partie Terminée!',
                             'next_level': 'NIVEAU SUIVANT',
                             'play_again': 'REJOUER',
@@ -2265,7 +2338,7 @@
                             'exit_confirm': 'Êtes-vous sûr de vouloir quitter Mix Crush? La progression non enregistrée peut être perdue.',
                             'reset_data': 'Réinitialiser les Données',
                             'reset_confirm': 'Toutes les données du jeu Mix Crush seront supprimées. Cette action est irréversible. Êtes-vous sûr?',
-                            'level_start': 'Mix Crush Niveau {0} commencé!',
+                            'level_start': 'Mix Crush Nivel {0} commencé!',
                             'booster_active': 'Booster actif! Cliquez sur un bonbon.',
                             'booster_cancelled': 'Booster annulé.',
                             
@@ -2344,7 +2417,7 @@
                             'matches_made': 'Abbinamenti Effettuati',
                             
                             'level_completed': 'Livello Completato!',
-                            'game_over': 'Partita Terminada!',
+                            'game_over': 'Partita Terminata!',
                             'next_level': 'LIVELLO SUCCESSIVO',
                             'play_again': 'GIOCA DI NUOVO',
                             'combo': 'Combo',
@@ -2440,12 +2513,12 @@
                             'fastest_level': 'Nível Mais Rápido',
                             'completed_levels': 'Níveis Concluídos',
                             'level_times': '⏱️ Tempos por Nível',
-                            'no_levels_completed': 'Nenhum nível concluído ainda',
+                            'no_levels_completed': 'Nenhum nivel concluído ainda',
                             'special_stats': '✨ Estatísticas Especiales',
                             'specials_created': 'Especiais Criados',
                             'matches_made': 'Combinações Feitas',
                             
-                            'level_completed': 'Nível Concluído!',
+                            'level_completed': 'Nivel Concluído!',
                             'game_over': 'Fim de Jogo!',
                             'next_level': 'PRÓXIMO NÍVEL',
                             'play_again': 'JOGAR NOVAMENTE',
@@ -2469,7 +2542,7 @@
                             'exit_confirm': 'Tem certeza que deseja sair do Mix Crush? O progresso não salvo pode ser perdido.',
                             'reset_data': 'Redefinir Dados',
                             'reset_confirm': 'Todos os dados do jogo Mix Crush serão excluídos. Esta ação não pode ser desfeita. Tem certeza?',
-                            'level_start': 'Mix Crush Nível {0} iniciado!',
+                            'level_start': 'Mix Crush Nivel {0} iniciado!',
                             'booster_active': 'Booster ativo! Clique em um doce.',
                             'booster_cancelled': 'Booster cancelado.',
                             
@@ -3013,6 +3086,8 @@
             
             initLanguageSelector() {
                 const dropdown = document.getElementById('lang-dropdown');
+                if (!dropdown) return;
+                
                 dropdown.innerHTML = '';
                 
                 Object.values(this.languages).forEach(lang => {
@@ -3036,10 +3111,13 @@
                 });
                 
                 // Dil seçici butonu
-                document.getElementById('lang-btn').onclick = (e) => {
-                    e.stopPropagation();
-                    dropdown.classList.toggle('show');
-                };
+                const langBtn = document.getElementById('lang-btn');
+                if (langBtn) {
+                    langBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        dropdown.classList.toggle('show');
+                    };
+                }
                 
                 // Dışarı tıklandığında dropdown'ı kapat
                 document.addEventListener('click', (e) => {
@@ -3060,6 +3138,14 @@
                     document.body.style.direction = lang.direction;
                     document.documentElement.lang = langCode;
                     
+                    // Dil seçici butonunu güncelle
+                    const currentLangFlag = document.getElementById('current-lang-flag');
+                    const currentLangName = document.getElementById('current-lang-name');
+                    if (currentLangFlag && currentLangName) {
+                        currentLangFlag.textContent = lang.flag;
+                        currentLangName.textContent = lang.name;
+                    }
+                    
                     // Oyun dil değişikliğini bildir
                     if (window.game) {
                         window.game.showToast(this.translate('language_changed'));
@@ -3071,8 +3157,12 @@
                 const lang = this.languages[this.currentLang];
                 
                 // Dil butonunu güncelle
-                document.getElementById('current-lang-flag').textContent = lang.flag;
-                document.getElementById('current-lang-name').textContent = lang.name;
+                const currentLangFlag = document.getElementById('current-lang-flag');
+                const currentLangName = document.getElementById('current-lang-name');
+                if (currentLangFlag && currentLangName) {
+                    currentLangFlag.textContent = lang.flag;
+                    currentLangName.textContent = lang.name;
+                }
                 
                 // Tüm metinleri çevir
                 document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -3766,6 +3856,8 @@
 
             updateLevelsGrid() {
                 const grid = document.getElementById('levels-grid');
+                if (!grid) return;
+                
                 const progress = this.storage.get('progress');
                 const stats = this.storage.get('stats');
                 const levelTimes = stats.levelTimes || {};
@@ -3774,11 +3866,18 @@
                 grid.innerHTML = '';
                 
                 const unlockedLevels = progress.unlockedLevels || 1;
-                document.getElementById('open-levels').textContent = unlockedLevels;
-                document.getElementById('levels-info').innerHTML = `
-                    <span data-i18n="open_levels">${this.language.translate('open_levels')}:</span> 
-                    <span id="open-levels">${unlockedLevels}</span>/100
-                `;
+                const openLevelsEl = document.getElementById('open-levels');
+                if (openLevelsEl) {
+                    openLevelsEl.textContent = unlockedLevels;
+                }
+                
+                const levelsInfo = document.getElementById('levels-info');
+                if (levelsInfo) {
+                    levelsInfo.innerHTML = `
+                        <span data-i18n="open_levels">${this.language.translate('open_levels')}:</span> 
+                        <span id="open-levels">${unlockedLevels}</span>/100
+                    `;
+                }
                 
                 for (let i = 1; i <= 100; i++) {
                     const levelBtn = document.createElement('button');
@@ -3960,6 +4059,8 @@
 
             render() {
                 const board = document.getElementById('game-board');
+                if (!board) return;
+                
                 board.innerHTML = '';
                 
                 for (let row = 0; row < this.size; row++) {
@@ -4017,6 +4118,8 @@
 
             bindGameBoard() {
                 const board = document.getElementById('game-board');
+                if (!board) return;
+                
                 board.onclick = (e) => {
                     if (this.currentBooster) {
                         // Booster aktifse tüm tahtaya tıklama
@@ -4780,6 +4883,8 @@
                 
                 // Seviye sürelerini göster
                 const levelTimesContainer = document.getElementById('level-times');
+                if (!levelTimesContainer) return;
+                
                 levelTimesContainer.innerHTML = '';
                 
                 const sortedLevels = Object.keys(levelTimes).sort((a, b) => b - a).slice(0, 10);
@@ -4959,7 +5064,7 @@
             }
         }
 
-        // === AUDIO MANAGER - SES DOSYALARI İLE GÜNCELLENMİŞ ===
+        // === AUDIO MANAGER ===
         class AudioManager {
             constructor(storage) {
                 this.storage = storage;

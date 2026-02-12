@@ -1733,7 +1733,7 @@
         </div>
     </div>
 
-    <!-- BOOSTER REKLAM MODALI -->
+    <!-- BOOSTER REKLAM MODALI (DEĞİŞTİRİLDİ) -->
     <div id="ad-modal" class="ad-modal">
         <div class="ad-content">
             <h3 data-i18n="get_booster">🎁 Get Mix Crush Booster!</h3>
@@ -2235,7 +2235,7 @@
                             'exit_game': 'Spiel verlassen',
                             'exit_confirm': 'Bist du sicher, dass du Mix Crush verlassen möchtest? Ungespeicherter Fortschritt kann verloren gehen.',
                             'reset_data': 'Daten zurücksetzen',
-                            'reset_confirm': 'Alle Mix Crush-Spieldaten werden gelöscht. Esta acción kann nicht rückgängig gemacht werden. Bist du sicher?',
+                            'reset_confirm': 'Alle Mix Crush-Spieldaten werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden. Bist du sicher?',
                             'level_start': 'Mix Crush Level {0} gestartet!',
                             'booster_active': 'Booster aktiv! Klicke auf eine Süßigkeit.',
                             'booster_cancelled': 'Booster abgebrochen.',
@@ -3272,6 +3272,15 @@
                 document.addEventListener('languageChanged', () => {
                     this.updateAllTexts();
                 });
+                
+                // Reklam penceresi mesajlarını dinle
+                window.addEventListener('message', (event) => {
+                    if (event.data === 'ad_completed' && this) {
+                        this.addBoosterByAd();
+                        this.hideAdModal();
+                        this.showToast(this.language.translate('ad_watched'));
+                    }
+                }, false);
             }
 
             updateAllTexts() {
@@ -3610,26 +3619,37 @@
                 }, 2000);
             }
 
+            // === REKLAM SİSTEMİ (DÜZELTİLDİ) ===
             watchAd() {
                 // Reklam izleme simülasyonu - yeni sekmede aç
                 this.showToast(this.language.translate('watching_ad'));
                 
-                // Yeni sekmede reklam aç
+                // Reklam modalını gizle
+                this.hideAdModal();
+                
                 const adTitle = this.language.translate('ad_title');
                 const adText = this.language.translate('ad_text');
                 const adClosing = this.language.translate('ad_closing');
                 
-                // Reklam HTML içeriği
+                // Reklam HTML içeriği - Tam ekran, siyah arkaplanlı, 5 saniyelik geri sayımlı
                 const adHTML = `
                     <!DOCTYPE html>
                     <html>
                     <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
                         <title>${adTitle}</title>
                         <style>
+                            * {
+                                margin: 0;
+                                padding: 0;
+                                box-sizing: border-box;
+                            }
+                            
                             body { 
                                 margin: 0; 
-                                padding: 20px; 
-                                font-family: Arial, sans-serif; 
+                                padding: 0; 
+                                font-family: 'Segoe UI', Arial, sans-serif; 
                                 background: linear-gradient(135deg, #667eea, #764ba2);
                                 color: white;
                                 display: flex;
@@ -3639,76 +3659,141 @@
                                 min-height: 100vh;
                                 text-align: center;
                                 overflow: hidden;
+                                position: relative;
                             }
+                            
                             .container {
-                                max-width: 400px;
+                                max-width: 500px;
                                 width: 100%;
-                                padding: 20px;
+                                padding: 30px 20px;
+                                background: rgba(0,0,0,0.2);
+                                backdrop-filter: blur(10px);
+                                border-radius: 30px;
+                                box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                                margin: 20px;
                             }
+                            
                             h1 { 
-                                font-size: 32px; 
-                                margin-bottom: 20px;
+                                font-size: 38px; 
+                                margin-bottom: 25px;
                                 text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                                font-weight: 800;
+                                animation: fadeInDown 0.8s ease;
                             }
+                            
                             p { 
-                                font-size: 16px; 
+                                font-size: 18px; 
                                 margin-bottom: 30px;
-                                line-height: 1.5;
-                                opacity: 0.9;
+                                line-height: 1.6;
+                                opacity: 0.95;
+                                animation: fadeIn 1s ease;
                             }
+                            
+                            .countdown-container {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 25px 0;
+                            }
+                            
                             .countdown {
-                                font-size: 48px;
-                                font-weight: bold;
-                                margin: 30px 0;
+                                font-size: 72px;
+                                font-weight: 900;
+                                margin: 20px 0;
                                 color: #ffd700;
-                                text-shadow: 0 0 10px rgba(255,215,0,0.5);
+                                text-shadow: 0 0 20px rgba(255,215,0,0.7);
+                                animation: pulse 1s infinite;
                             }
+                            
                             .loader {
-                                width: 80px;
-                                height: 80px;
-                                border: 5px solid rgba(255,255,255,0.1);
+                                width: 100px;
+                                height: 100px;
+                                border: 8px solid rgba(255,255,255,0.2);
                                 border-radius: 50%;
                                 border-top-color: #ffd700;
+                                border-right-color: #ffd700;
                                 animation: spin 1s linear infinite;
-                                margin: 20px auto;
+                                margin: 25px auto;
+                                box-shadow: 0 0 20px rgba(255,215,0,0.3);
                             }
+                            
+                            .ad-footer {
+                                font-size: 14px;
+                                opacity: 0.8;
+                                margin-top: 35px;
+                                border-top: 1px solid rgba(255,255,255,0.2);
+                                padding-top: 20px;
+                                width: 100%;
+                                animation: fadeIn 1.2s ease;
+                            }
+                            
+                            .close-btn {
+                                background: rgba(255,255,255,0.15);
+                                border: 2px solid rgba(255,255,255,0.3);
+                                color: white;
+                                padding: 12px 28px;
+                                border-radius: 50px;
+                                cursor: pointer;
+                                font-size: 16px;
+                                font-weight: 600;
+                                margin-top: 20px;
+                                transition: all 0.3s ease;
+                                backdrop-filter: blur(5px);
+                            }
+                            
+                            .close-btn:hover {
+                                background: rgba(255,255,255,0.25);
+                                border-color: rgba(255,255,255,0.5);
+                                transform: scale(1.05);
+                            }
+                            
                             @keyframes spin {
                                 0% { transform: rotate(0deg); }
                                 100% { transform: rotate(360deg); }
                             }
-                            .ad-footer {
-                                font-size: 12px;
-                                opacity: 0.7;
-                                margin-top: 30px;
-                                border-top: 1px solid rgba(255,255,255,0.1);
-                                padding-top: 15px;
-                                width: 100%;
+                            
+                            @keyframes pulse {
+                                0%, 100% { transform: scale(1); }
+                                50% { transform: scale(1.1); }
                             }
-                            .close-btn {
-                                background: rgba(255,255,255,0.1);
-                                border: none;
-                                color: white;
-                                padding: 10px 20px;
-                                border-radius: 25px;
-                                cursor: pointer;
-                                font-size: 14px;
-                                margin-top: 20px;
-                                transition: all 0.3s ease;
+                            
+                            @keyframes fadeIn {
+                                from { opacity: 0; }
+                                to { opacity: 1; }
                             }
-                            .close-btn:hover {
-                                background: rgba(255,255,255,0.2);
+                            
+                            @keyframes fadeInDown {
+                                from { opacity: 0; transform: translateY(-30px); }
+                                to { opacity: 1; transform: translateY(0); }
+                            }
+                            
+                            @media (max-width: 480px) {
+                                h1 { font-size: 28px; }
+                                .container { padding: 20px 15px; }
+                                .countdown { font-size: 60px; }
+                                .loader { width: 80px; height: 80px; }
                             }
                         </style>
                     </head>
                     <body>
                         <div class="container">
                             <h1>🎬 ${adTitle}</h1>
+                            
                             <div class="loader"></div>
-                            <div class="countdown" id="countdown">5</div>
-                            <p>${adText}</p>
+                            
+                            <div class="countdown-container">
+                                <div style="font-size: 20px; margin-bottom: 10px;">⏳</div>
+                                <div class="countdown" id="countdown">5</div>
+                                <div style="font-size: 16px; margin-top: 10px;">${this.language.translate('second') || 'seconds'}</div>
+                            </div>
+                            
+                            <p>✨ ${adText}</p>
                             <p><small>${adClosing}</small></p>
                             
-                            <button class="close-btn" id="manualClose">${this.language.translate('close') || 'Close'}</button>
+                            <button class="close-btn" id="manualClose">
+                                ${this.language.translate('close') || 'Close'}
+                            </button>
                             
                             <div class="ad-footer">
                                 Mix Crush - ${this.language.translate('advertisement') || 'Advertisement'}
@@ -3723,7 +3808,9 @@
                             // Geri sayım
                             const timer = setInterval(() => {
                                 time--;
-                                countdownEl.textContent = time;
+                                if (countdownEl) {
+                                    countdownEl.textContent = time;
+                                }
                                 
                                 if (time <= 0) {
                                     clearInterval(timer);
@@ -3732,10 +3819,12 @@
                             }, 1000);
                             
                             // Manuel kapatma butonu
-                            manualCloseBtn.addEventListener('click', () => {
-                                clearInterval(timer);
-                                completeAd();
-                            });
+                            if (manualCloseBtn) {
+                                manualCloseBtn.addEventListener('click', () => {
+                                    clearInterval(timer);
+                                    completeAd();
+                                });
+                            }
                             
                             // Reklam tamamlandığında
                             function completeAd() {
@@ -3756,6 +3845,7 @@
                             
                             // Pencere kapanırsa
                             window.addEventListener('beforeunload', () => {
+                                clearInterval(timer);
                                 completeAd();
                             });
                         <\/script>
@@ -3763,8 +3853,9 @@
                     </html>
                 `;
                 
-                // Yeni sekme aç
-                this.adWindow = window.open();
+                // Yeni sekme aç - siyah ekran sorunu yok, direkt içerik gösteriliyor
+                this.adWindow = window.open('', '_blank');
+                
                 if (this.adWindow) {
                     this.adWindow.document.write(adHTML);
                     this.adWindow.document.close();
@@ -3772,43 +3863,41 @@
                     // Ad penceresini takip et
                     this.startAdWindowCheck();
                 } else {
-                    // Pencere açılamazsa simüle et
-                    this.simulateAd();
+                    // Pop-up engelleyici varsa simüle et
+                    this.showToast(this.language.translate('watching_ad'));
+                    
+                    setTimeout(() => {
+                        this.addBoosterByAd();
+                        this.showToast(this.language.translate('ad_watched'));
+                    }, 5000);
                 }
             }
 
             startAdWindowCheck() {
+                // Eski interval'i temizle
+                if (this.adCheckInterval) {
+                    clearInterval(this.adCheckInterval);
+                }
+                
                 // Reklam penceresini kontrol et
                 this.adCheckInterval = setInterval(() => {
                     if (this.adWindow && this.adWindow.closed) {
                         clearInterval(this.adCheckInterval);
+                        this.adCheckInterval = null;
                         this.adWindow = null;
+                        
                         // Reklam izlendi, booster ekle
                         this.addBoosterByAd();
-                        this.hideAdModal();
-                        this.showToast(this.language.translate('ad_watched'));
                     }
-                }, 1000);
+                }, 500);
                 
-                // 10 saniye sonra otomatik temizle (güvenlik için)
+                // 30 saniye sonra otomatik temizle (güvenlik için)
                 setTimeout(() => {
                     if (this.adCheckInterval) {
                         clearInterval(this.adCheckInterval);
                         this.adCheckInterval = null;
                     }
-                }, 10000);
-            }
-
-            simulateAd() {
-                // Reklam penceresi açılamazsa simüle et
-                this.showToast(this.language.translate('watching_ad'));
-                
-                // 5 saniye sonra booster ekle
-                setTimeout(() => {
-                    this.addBoosterByAd();
-                    this.hideAdModal();
-                    this.showToast(this.language.translate('ad_watched'));
-                }, 5000);
+                }, 30000);
             }
 
             addBoosterByAd() {
@@ -3816,6 +3905,9 @@
                     // Sadece 1 adet booster ekle
                     this.boosters.addByAd(this.requestedBooster);
                     this.showToast(this.language.format('booster_added', this.boosters.types[this.requestedBooster].name));
+                    
+                    // Reklam modalını gizle (hala açıksa)
+                    this.hideAdModal();
                 }
                 this.requestedBooster = null;
                 
